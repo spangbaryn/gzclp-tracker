@@ -2,7 +2,6 @@ import { AppContainer } from '@/components/app-container'
 import { getOrCreateUser } from '@/lib/user'
 import { WorkoutContainer } from '@/components/workout-container'
 import { SetupWeights } from '@/components/setup-weights'
-import { workouts } from '@/lib/constants'
 
 // Disable caching to ensure fresh data
 export const dynamic = 'force-dynamic'
@@ -40,7 +39,6 @@ export default async function WorkoutPage() {
   const currentWorkoutIndex = settings.currentWorkout || 0
   const workoutKeys = ['A1', 'B1', 'A2', 'B2'] as const
   const currentWorkoutKey = workoutKeys[currentWorkoutIndex]
-  const currentWorkout = workouts[currentWorkoutKey]
 
   // Debug logging
   console.log('Loading workout page:')

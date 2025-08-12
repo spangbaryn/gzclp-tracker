@@ -4,15 +4,13 @@ import { prisma } from './db'
 const DEFAULT_USER_ID = 'default-user'
 
 export async function getOrCreateUser() {
-  // Check if default user exists - use cache: 'no-store' hint
+  // Check if default user exists
   let user = await prisma.user.findUnique({
     where: { id: DEFAULT_USER_ID },
     include: { 
       settings: true, 
       progressions: true 
-    },
-    // @ts-ignore - Prisma Accelerate cache hint
-    cacheStrategy: { ttl: 0 }
+    }
   })
 
   // If not, create it
