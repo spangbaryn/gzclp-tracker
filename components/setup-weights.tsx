@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { NumberPadModal } from './number-pad-modal'
 
 interface SetupWeightsProps {
@@ -14,7 +13,6 @@ export function SetupWeights({ unit }: SetupWeightsProps) {
   const [deadliftMax, setDeadliftMax] = useState(0)
   const [ohpMax, setOhpMax] = useState(0)
   const [showNumberPad, setShowNumberPad] = useState<string | null>(null)
-  const router = useRouter()
 
   const handleSave = async () => {
     console.log('Start Training clicked with weights:', { squatMax, benchMax, deadliftMax, ohpMax })

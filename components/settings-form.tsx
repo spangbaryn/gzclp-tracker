@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import type { UserSettings } from '@prisma/client'
 
 interface SettingsFormProps {
@@ -10,7 +9,6 @@ interface SettingsFormProps {
 
 export function SettingsForm({ settings }: SettingsFormProps) {
   const [unit, setUnit] = useState(settings.unit)
-  const router = useRouter()
 
   const handleSave = async () => {
     try {
