@@ -42,10 +42,25 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
           const stageKey = exercise.tier === 1 ? 't1Stage' : 't2Stage'
           const weightKey = exercise.tier === 1 ? 't1Weight' : 't2Weight'
           
-          const stage = stageConfig[tierKey][prog[stageKey] as 1 | 2 | 3]
+          // Debug logging
+          console.log(`Exercise: ${exercise.name}, Tier: ${exercise.tier}, Type: ${exercise.type}`)
+          console.log(`Progression:`, prog)
+          console.log(`Stage value from DB: ${prog[stageKey]}`)
+          
+          // Ensure stage is within valid range (1-3)
+          const stageValue = Math.max(1, Math.min(3, prog[stageKey] || 1)) as 1 | 2 | 3
+          const stage = stageConfig[tierKey][stageValue]
+          
+          // Get weight with fallback to calculated max
           weight = prog[weightKey] || (exercise.tier === 1 
             ? settings[`${exercise.type}Max` as keyof UserSettings] as number
             : Math.round((settings[`${exercise.type}Max` as keyof UserSettings] as number) * 0.65))
+          
+          // Ensure weight is reasonable (not 0 or extremely high)
+          weight = Math.max(45, Math.min(weight, 2000))
+          
+          console.log(`Final weight: ${weight}, Sets: ${stage.sets}, Reps: ${stage.reps}`)
+          
           sets = stage.sets
           reps = stage.reps
           stageName = stage.name
