@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { ExerciseCard } from './exercise-card'
 import { CompleteWorkoutButton } from './complete-workout-button'
+import { RestTimer } from './rest-timer'
+import { useRestTimer } from '@/hooks/use-rest-timer'
 import type { Progression, UserSettings } from '@prisma/client'
 import type { WorkoutType } from '@/lib/constants'
 import { workouts, stageConfig } from '@/lib/constants'
@@ -29,6 +31,8 @@ export interface ExerciseData {
 
 export function WorkoutView({ workout, workoutKey, settings, progressions }: WorkoutViewProps) {
   const [lastT3Weights, setLastT3Weights] = useState<Record<string, { weight: number, shouldIncrease: boolean }>>({})
+  const { startTime, startTimer } = useRestTimer()
+  const [timerExerciseIndex, setTimerExerciseIndex] = useState<number | null>(null)
   
   // Fetch last workout data to check T3 progression
   useEffect(() => {
@@ -139,7 +143,30 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
     setExercisesData(prev => {
       const newData = [...prev]
       const set = newData[exerciseIndex].sets[setIndex]
+      const wasCompleted = set.completed
       set.completed = !set.completed
+      
+      // Handle timer logic
+      if (!wasCompleted && set.completed) {
+        // Set was just completed
+        const exercise = newData[exerciseIndex]
+        const isLastSet = setIndex === exercise.sets.length - 1
+        const isLastExercise = exerciseIndex === exercisesData.length - 1
+        
+        if (isLastExercise && isLastSet) {
+          // Last set of last exercise - no timer needed
+          setTimerExerciseIndex(null)
+        } else if (isLastSet) {
+          // Last set of exercise - show timer on next exercise
+          setTimerExerciseIndex(exerciseIndex + 1)
+          startTimer()
+        } else {
+          // More sets remaining in current exercise
+          setTimerExerciseIndex(exerciseIndex)
+          startTimer()
+        }
+      }
+      
       return newData
     })
   }
@@ -155,16 +182,20 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
   return (
     <>
       {exercisesData.map((exercise, index) => (
-        <ExerciseCard
-          key={index}
-          exercise={exercise}
-          exerciseIndex={index}
-          unit={settings.unit}
-          onAdjustWeight={adjustWeight}
-          onToggleSet={toggleSet}
-          onUpdateAmrapReps={updateAmrapReps}
-          onSetWeight={setWeight}
-        />
+        <div key={index}>
+          {timerExerciseIndex === index && (
+            <RestTimer startTime={startTime} />
+          )}
+          <ExerciseCard
+            exercise={exercise}
+            exerciseIndex={index}
+            unit={settings.unit}
+            onAdjustWeight={adjustWeight}
+            onToggleSet={toggleSet}
+            onUpdateAmrapReps={updateAmrapReps}
+            onSetWeight={setWeight}
+          />
+        </div>
       ))}
       <CompleteWorkoutButton 
         workoutKey={workoutKey}
