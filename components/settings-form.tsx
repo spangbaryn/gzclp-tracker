@@ -19,25 +19,47 @@ export function SettingsForm({ settings }: SettingsFormProps) {
   const router = useRouter()
 
   const handleSave = async () => {
-    await fetch('/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        unit,
-        squatMax,
-        benchMax,
-        deadliftMax,
-        ohpMax
+    try {
+      const response = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          unit,
+          squatMax,
+          benchMax,
+          deadliftMax,
+          ohpMax
+        })
       })
-    })
-    alert('Saved')
-    router.refresh()
+      
+      if (response.ok) {
+        alert('Settings saved successfully!')
+        // Force a complete page reload to show updated values
+        window.location.reload()
+      } else {
+        alert('Failed to save settings')
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error)
+      alert('Failed to save settings')
+    }
   }
 
   const handleReset = async () => {
     if (confirm('Delete all data?')) {
-      await fetch('/api/reset', { method: 'POST' })
-      router.refresh()
+      try {
+        const response = await fetch('/api/reset', { method: 'POST' })
+        if (response.ok) {
+          alert('Data reset successfully!')
+          // Force reload to show reset values
+          window.location.href = '/'
+        } else {
+          alert('Failed to reset data')
+        }
+      } catch (error) {
+        console.error('Error resetting data:', error)
+        alert('Failed to reset data')
+      }
     }
   }
 
