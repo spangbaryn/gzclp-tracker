@@ -116,11 +116,27 @@ export async function POST(request: NextRequest) {
     }
 
     // Update current workout
-    const nextWorkout = (user.settings!.currentWorkout + 1) % 4
-    await prisma.userSettings.update({
+    const currentWorkout = user.settings!.currentWorkout
+    const nextWorkout = (currentWorkout + 1) % 4
+    
+    console.log('Updating workout progression:')
+    console.log('User ID:', user.id)
+    console.log('Current workout:', currentWorkout)
+    console.log('Next workout:', nextWorkout)
+    
+    const updatedSettings = await prisma.userSettings.update({
       where: { userId: user.id },
       data: { currentWorkout: nextWorkout }
     })
+    
+    console.log('Updated settings:', updatedSettings)
+    
+    // Verify the update
+    const verifyUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      include: { settings: true }
+    })
+    console.log('Verified user settings after update:', verifyUser?.settings)
 
     return NextResponse.json({ success: true, workoutId: workout.id })
   } catch (error) {

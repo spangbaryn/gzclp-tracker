@@ -55,19 +55,13 @@ export function CompleteWorkoutButton({
     }
   }
 
-  const handleModalClose = () => {
+  const handleModalClose = async () => {
     setShowModal(false)
     // Small delay to ensure modal closes smoothly
-    setTimeout(() => {
-      // Force a hard refresh to ensure new workout loads
-      router.refresh()
-      // Navigate to home to trigger full page reload
-      router.push('/')
-      // Fallback: reload the page if refresh doesn't work
-      setTimeout(() => {
-        window.location.href = '/'
-      }, 100)
-    }, 100)
+    await new Promise(resolve => setTimeout(resolve, 100))
+    
+    // Force a complete page reload to bypass any caching
+    window.location.reload()
   }
 
   return (
