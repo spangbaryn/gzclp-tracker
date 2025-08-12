@@ -180,6 +180,13 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
 
   return (
     <>
+      {/* Workout name header */}
+      <div className="text-center mb-6">
+        <h1 className="text-sm font-bold uppercase tracking-[2px] text-muted">
+          Workout {workoutKey}
+        </h1>
+      </div>
+      
       {exercisesData.map((exercise, index) => (
         <div key={index}>
           {timerExerciseIndex === index && (
