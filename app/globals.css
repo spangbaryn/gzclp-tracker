@@ -124,6 +124,14 @@
   
   .pt-safe {
     padding-top: env(safe-area-inset-top);
+    padding-top: max(env(safe-area-inset-top), 20px);
+  }
+  
+  /* Ensure minimum top spacing for status bar */
+  @supports (padding: max(0px)) {
+    .pt-safe {
+      padding-top: max(env(safe-area-inset-top), 20px);
+    }
   }
   
   /* Subtle gradient overlay for depth */
