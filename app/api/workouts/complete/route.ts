@@ -137,10 +137,14 @@ export async function POST(request: NextRequest) {
     const currentWorkout = user.settings!.currentWorkout
     const nextWorkout = (currentWorkout + 1) % 4
     
-    console.log('Updating workout progression:')
+    console.log('=== WORKOUT PROGRESSION UPDATE ===')
     console.log('User ID:', user.id)
-    console.log('Current workout:', currentWorkout)
-    console.log('Next workout:', nextWorkout)
+    console.log('Current workout index:', currentWorkout)
+    console.log('Current workout key:', ['A1', 'B1', 'A2', 'B2'][currentWorkout])
+    console.log('Next workout index:', nextWorkout)
+    console.log('Next workout key:', ['A1', 'B1', 'A2', 'B2'][nextWorkout])
+    console.log('Calculation: (', currentWorkout, '+ 1) % 4 =', nextWorkout)
+    console.log('================================')
     
     const updatedSettings = await prisma.userSettings.update({
       where: { userId: user.id },

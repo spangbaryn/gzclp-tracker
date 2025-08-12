@@ -17,6 +17,7 @@ export default async function WorkoutPage() {
                      settings.deadliftMax === 0 || settings.ohpMax === 0
   
   console.log('=== Workout Page Loading ===')
+  console.log('Timestamp:', new Date().toISOString())
   console.log('Settings:', settings)
   console.log('Needs setup:', needsSetup)
   console.log('Weight values:', {
