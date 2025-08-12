@@ -43,6 +43,11 @@ export const stageConfig = {
     1: { sets: 3, reps: 10, name: '3×10', minVolume: 30 },
     2: { sets: 3, reps: 8, name: '3×8', minVolume: 24 },
     3: { sets: 3, reps: 6, name: '3×6', minVolume: 18 }
+  },
+  t3: {
+    sets: 3,
+    reps: 15,
+    name: '3×15+'
   }
 } as const
 

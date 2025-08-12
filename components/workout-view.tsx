@@ -51,7 +51,11 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
           stageName = stage.name
         }
       } else {
+        // T3 accessories
         weight = 45 // Default accessory weight
+        sets = stageConfig.t3.sets
+        reps = stageConfig.t3.reps
+        stageName = stageConfig.t3.name
       }
       
       return {
