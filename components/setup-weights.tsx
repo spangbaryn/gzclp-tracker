@@ -36,8 +36,8 @@ export function SetupWeights({ unit }: SetupWeightsProps) {
       })
       
       if (response.ok) {
-        // Reload to show the workout with calculated weights
-        window.location.reload()
+        // Redirect to home to show the workout with calculated weights
+        window.location.href = '/'
       } else {
         alert('Failed to save starting weights')
       }
