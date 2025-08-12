@@ -132,10 +132,12 @@ export function ExerciseCard({
             setAmrapSetIndex(null)
           }}
           onSave={(reps) => {
+            console.log('AMRAP Save clicked - reps:', reps, 'exerciseIndex:', exerciseIndex, 'setIndex:', amrapSetIndex)
             // Update the reps
             onUpdateAmrapReps(exerciseIndex, amrapSetIndex, reps)
             // Mark the set as completed
             onToggleSet(exerciseIndex, amrapSetIndex)
+            console.log('AMRAP set should now be completed')
             setShowAmrapModal(false)
             setAmrapSetIndex(null)
           }}

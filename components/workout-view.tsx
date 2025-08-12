@@ -140,18 +140,29 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
   }
 
   const toggleSet = (exerciseIndex: number, setIndex: number) => {
+    console.log('toggleSet called:', { exerciseIndex, setIndex })
+    
     setExercisesData(prev => {
       const newData = [...prev]
       const set = newData[exerciseIndex].sets[setIndex]
       const wasCompleted = set.completed
       set.completed = !set.completed
       
+      console.log('Set toggled:', { 
+        exerciseIndex, 
+        setIndex, 
+        wasCompleted, 
+        nowCompleted: set.completed,
+        isLastSet: setIndex === newData[exerciseIndex].sets.length - 1,
+        isLastExercise: exerciseIndex === newData.length - 1
+      })
+      
       // Handle timer logic
       if (!wasCompleted && set.completed) {
         // Set was just completed
         const exercise = newData[exerciseIndex]
         const isLastSet = setIndex === exercise.sets.length - 1
-        const isLastExercise = exerciseIndex === exercisesData.length - 1
+        const isLastExercise = exerciseIndex === newData.length - 1 // Fixed: use newData.length
         
         if (isLastExercise && isLastSet) {
           // Last set of last exercise - no timer needed
@@ -172,9 +183,11 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
   }
 
   const updateAmrapReps = (exerciseIndex: number, setIndex: number, value: number) => {
+    console.log('updateAmrapReps called:', { exerciseIndex, setIndex, value })
     setExercisesData(prev => {
       const newData = [...prev]
       newData[exerciseIndex].sets[setIndex].reps = value
+      console.log('AMRAP reps updated:', newData[exerciseIndex].sets[setIndex])
       return newData
     })
   }

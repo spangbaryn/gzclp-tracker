@@ -12,6 +12,12 @@ export function ProgressionPreview({ exercise, unit }: ProgressionPreviewProps) 
   // Check if all sets are completed
   const allSetsCompleted = exercise.sets.every(set => set.completed)
   
+  console.log('ProgressionPreview render:', {
+    exercise: exercise.name,
+    sets: exercise.sets,
+    allSetsCompleted
+  })
+  
   if (!allSetsCompleted) {
     return null // Don't show preview until all sets are done
   }
