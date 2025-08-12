@@ -83,30 +83,40 @@ export async function POST(request: NextRequest) {
           }
           
           if (shouldProgress) {
-            // Increase weight
+            // Completed all sets/reps - increase weight, stay at same stage
             const increment = (exercise.type === 'bench' || exercise.type === 'ohp') ? 5 : 10
             await prisma.progression.update({
               where: { id: progression.id },
-              data: { [weightKey]: exercise.weight + increment }
+              data: { 
+                [weightKey]: exercise.weight + increment,
+                // Keep same stage when progressing weight
+                [stageKey]: progression[stageKey]
+              }
             })
           } else {
-            // Move to next stage
-            const nextStage = progression[stageKey] + 1
+            // Failed to complete - move to next stage with same weight
+            const currentStage = progression[stageKey] as number
+            const nextStage = currentStage + 1
+            
             if (nextStage <= 3) {
+              // Move to easier stage
               await prisma.progression.update({
                 where: { id: progression.id },
                 data: {
                   [stageKey]: nextStage,
-                  [weightKey]: exercise.weight
+                  [weightKey]: exercise.weight // Keep same weight
                 }
               })
             } else {
-              // Reset to stage 1 (would need 5RM test)
+              // Completed Stage 3 failure - need to reset
+              // In real GZCLP, you'd test new 5RM and use 85%
+              // For now, we'll reduce weight by 10% and reset to stage 1
+              const resetWeight = Math.round(exercise.weight * 0.9)
               await prisma.progression.update({
                 where: { id: progression.id },
                 data: {
                   [stageKey]: 1,
-                  [weightKey]: exercise.weight
+                  [weightKey]: resetWeight
                 }
               })
             }
