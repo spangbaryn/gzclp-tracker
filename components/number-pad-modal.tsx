@@ -163,6 +163,7 @@ export function NumberPadModal({
           ))}
         </div>
       </div>
+      </div>
     </>,
     document.body
   )
