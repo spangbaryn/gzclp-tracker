@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 interface NumberPadModalProps {
   isOpen: boolean
@@ -32,7 +33,14 @@ export function NumberPadModal({
     }
   }, [isOpen, initialValue])
 
-  if (!isOpen) return null
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    return () => setMounted(false)
+  }, [])
+
+  if (!isOpen || !mounted) return null
 
   const handleNumberPress = (num: string) => {
     if (value === '0') {
@@ -81,8 +89,8 @@ export function NumberPadModal({
     { label: '⌫', action: handleBackspace }
   ]
 
-  return (
-    <div className="fixed inset-0 z-[1001] bg-background flex flex-col min-h-screen h-screen w-full overflow-hidden overscroll-none touch-none">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] bg-background flex flex-col h-full w-full overflow-hidden overscroll-none touch-none">
       {/* Header */}
       <div className="glass-heavy border-b border-white/10 px-4 py-3 flex items-center justify-between flex-shrink-0">
         <button
@@ -142,6 +150,7 @@ export function NumberPadModal({
           ))}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
