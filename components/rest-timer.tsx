@@ -32,11 +32,20 @@ export function RestTimer({ startTime }: RestTimerProps) {
   const seconds = elapsed % 60
   const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`
 
+  // Determine color based on elapsed time
+  const getTimerColor = () => {
+    if (elapsed >= 180) return 'text-red-500' // 3 minutes or more
+    if (elapsed >= 90) return 'text-green-500' // 1 minute 30 seconds or more
+    return 'text-primary' // Less than 1 minute 30 seconds (blue)
+  }
+
+  const timerColor = getTimerColor()
+
   return (
     <div className="rest-timer mb-3 text-center">
       <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
         <span className="text-xs uppercase tracking-wider text-muted">Rest Timer</span>
-        <span className="text-sm font-mono font-bold text-primary">{formattedTime}</span>
+        <span className={`text-sm font-mono font-bold ${timerColor}`}>{formattedTime}</span>
       </div>
     </div>
   )

@@ -61,6 +61,33 @@ describe('RestTimer Component', () => {
     const timerElement = screen.getByText(/0:00/).parentElement?.parentElement
     expect(timerElement).toHaveClass('rest-timer')
   })
+
+  it('should change color based on elapsed time', () => {
+    const startTime = Date.now()
+    const { rerender } = render(<RestTimer startTime={startTime} />)
+    
+    // Initially blue (< 90 seconds)
+    let timerDisplay = screen.getByText(/0:00/)
+    expect(timerDisplay).toHaveClass('text-primary')
+    
+    // Advance to 1:30 - should be green
+    act(() => {
+      jest.advanceTimersByTime(90000)
+    })
+    
+    rerender(<RestTimer startTime={startTime} />)
+    timerDisplay = screen.getByText(/1:30/)
+    expect(timerDisplay).toHaveClass('text-green-500')
+    
+    // Advance to 3:00 - should be red
+    act(() => {
+      jest.advanceTimersByTime(90000) // Total 180 seconds
+    })
+    
+    rerender(<RestTimer startTime={startTime} />)
+    timerDisplay = screen.getByText(/3:00/)
+    expect(timerDisplay).toHaveClass('text-red-500')
+  })
 })
 
 describe('Rest Timer Integration with Workout', () => {

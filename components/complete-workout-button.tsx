@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { CompleteModal } from './complete-modal'
 import type { ExerciseData } from './workout-view'
 import type { WorkoutType } from '@/lib/constants'
@@ -16,6 +17,7 @@ export function CompleteWorkoutButton({
 }: CompleteWorkoutButtonProps) {
   const [showModal, setShowModal] = useState(false)
   const [completedSets, setCompletedSets] = useState(0)
+  const router = useRouter()
 
   const handleComplete = async () => {
     try {
@@ -58,13 +60,11 @@ export function CompleteWorkoutButton({
     }
   }
 
-  const handleModalClose = async () => {
+  const handleModalClose = () => {
     setShowModal(false)
-    // Small delay to ensure modal closes smoothly
-    await new Promise(resolve => setTimeout(resolve, 100))
-    
-    // Force a complete page reload to bypass any caching
-    window.location.reload()
+    // Add timestamp to URL to force fresh data load
+    const timestamp = Date.now()
+    window.location.href = `/?t=${timestamp}`
   }
 
   return (

@@ -1,12 +1,13 @@
 import { AppContainer } from '@/components/app-container'
 import { getOrCreateUser } from '@/lib/user'
-import { WorkoutView } from '@/components/workout-view'
+import { WorkoutContainer } from '@/components/workout-container'
 import { SetupWeights } from '@/components/setup-weights'
 import { workouts } from '@/lib/constants'
 
 // Disable caching to ensure fresh data
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
+export const fetchCache = 'force-no-store'
 
 export default async function WorkoutPage() {
   const user = await getOrCreateUser()
@@ -57,9 +58,8 @@ export default async function WorkoutPage() {
 
   return (
     <AppContainer>
-      <WorkoutView 
-        workout={currentWorkout}
-        workoutKey={currentWorkoutKey}
+      <WorkoutContainer 
+        initialWorkoutKey={currentWorkoutKey}
         settings={settings}
         progressions={user.progressions}
       />
