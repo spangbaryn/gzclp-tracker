@@ -122,6 +122,14 @@ export async function POST(request: NextRequest) {
             }
           }
         }
+      } else if (exercise.tier === 3) {
+        // T3 Progression: Check if user hit 25+ reps on AMRAP
+        const lastSet = exercise.sets[exercise.sets.length - 1]
+        if (lastSet.completed && lastSet.isAmrap && lastSet.reps >= 25) {
+          // Store a note that this T3 should increase next time
+          // We'll handle this by looking at the previous workout when loading
+          console.log(`T3 ${exercise.name} achieved ${lastSet.reps} reps - should increase weight next time`)
+        }
       }
     }
 

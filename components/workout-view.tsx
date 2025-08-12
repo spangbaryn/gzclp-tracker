@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ExerciseCard } from './exercise-card'
 import { CompleteWorkoutButton } from './complete-workout-button'
 import type { Progression, UserSettings } from '@prisma/client'
@@ -28,8 +28,29 @@ export interface ExerciseData {
 }
 
 export function WorkoutView({ workout, workoutKey, settings, progressions }: WorkoutViewProps) {
-  const [exercisesData, setExercisesData] = useState<ExerciseData[]>(() => {
-    return workout.exercises.map((exercise) => {
+  const [lastT3Weights, setLastT3Weights] = useState<Record<string, { weight: number, shouldIncrease: boolean }>>({})
+  
+  // Fetch last workout data to check T3 progression
+  useEffect(() => {
+    const fetchLastWorkout = async () => {
+      try {
+        const response = await fetch('/api/workouts/last-t3')
+        if (response.ok) {
+          const data = await response.json()
+          setLastT3Weights(data)
+        }
+      } catch (error) {
+        console.error('Error fetching last T3 weights:', error)
+      }
+    }
+    fetchLastWorkout()
+  }, [])
+
+  const [exercisesData, setExercisesData] = useState<ExerciseData[]>([])
+
+  // Initialize exercise data with T3 weights
+  useEffect(() => {
+    const data = workout.exercises.map((exercise) => {
       let weight = 0
       let sets = 3
       let reps = 15
@@ -67,7 +88,13 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
         }
       } else {
         // T3 accessories
-        weight = 45 // Default accessory weight
+        const lastT3 = lastT3Weights[exercise.name]
+        if (lastT3) {
+          // If we have previous data and should increase, add 5 lbs
+          weight = lastT3.shouldIncrease ? lastT3.weight + 5 : lastT3.weight
+        } else {
+          weight = 45 // Default accessory weight
+        }
         sets = stageConfig.t3.sets
         reps = stageConfig.t3.reps
         stageName = stageConfig.t3.name
@@ -86,7 +113,8 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
         stage: stageName
       }
     })
-  })
+    setExercisesData(data)
+  }, [workout, settings, progressions, lastT3Weights])
 
   const adjustWeight = (exerciseIndex: number, amount: number) => {
     setExercisesData(prev => {
