@@ -31,16 +31,37 @@ export async function POST() {
 
     // Reset progressions
     console.log('Resetting progressions...')
-    const updatedProgressions = await prisma.progression.updateMany({
-      where: { userId: user.id },
-      data: {
-        t1Stage: 1,
-        t2Stage: 1,
-        t1Weight: 0,
-        t2Weight: 0
-      }
+    
+    // First check if progressions exist
+    const existingProgressions = await prisma.progression.findMany({
+      where: { userId: user.id }
     })
-    console.log('Updated progressions:', updatedProgressions.count)
+    console.log('Existing progressions:', existingProgressions.length)
+    
+    if (existingProgressions.length === 0) {
+      // Create progressions if they don't exist
+      console.log('Creating progressions...')
+      await prisma.progression.createMany({
+        data: [
+          { userId: user.id, liftType: 'squat', t1Stage: 1, t2Stage: 1, t1Weight: 0, t2Weight: 0 },
+          { userId: user.id, liftType: 'bench', t1Stage: 1, t2Stage: 1, t1Weight: 0, t2Weight: 0 },
+          { userId: user.id, liftType: 'deadlift', t1Stage: 1, t2Stage: 1, t1Weight: 0, t2Weight: 0 },
+          { userId: user.id, liftType: 'ohp', t1Stage: 1, t2Stage: 1, t1Weight: 0, t2Weight: 0 }
+        ]
+      })
+    } else {
+      // Update existing progressions
+      const updatedProgressions = await prisma.progression.updateMany({
+        where: { userId: user.id },
+        data: {
+          t1Stage: 1,
+          t2Stage: 1,
+          t1Weight: 0,
+          t2Weight: 0
+        }
+      })
+      console.log('Updated progressions:', updatedProgressions.count)
+    }
 
     console.log('Reset complete')
     return NextResponse.json({ success: true })
