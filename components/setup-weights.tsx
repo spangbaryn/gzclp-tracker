@@ -17,13 +17,16 @@ export function SetupWeights({ unit }: SetupWeightsProps) {
   const router = useRouter()
 
   const handleSave = async () => {
-    // Validate that all weights are entered
-    if (!squatMax || !benchMax || !deadliftMax || !ohpMax) {
+    console.log('Start Training clicked with weights:', { squatMax, benchMax, deadliftMax, ohpMax })
+    
+    // Validate that all weights are entered (must be greater than 0)
+    if (squatMax <= 0 || benchMax <= 0 || deadliftMax <= 0 || ohpMax <= 0) {
       alert('Please enter all starting weights')
       return
     }
 
     try {
+      console.log('Sending weights to API...')
       const response = await fetch('/api/setup-weights', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -35,15 +38,20 @@ export function SetupWeights({ unit }: SetupWeightsProps) {
         })
       })
       
+      console.log('Setup response:', response.status)
+      
       if (response.ok) {
+        console.log('Weights saved successfully, redirecting...')
         // Redirect to home to show the workout with calculated weights
         window.location.href = '/'
       } else {
+        const error = await response.text()
+        console.error('Failed to save weights:', error)
         alert('Failed to save starting weights')
       }
     } catch (error) {
       console.error('Error saving weights:', error)
-      alert('Failed to save starting weights')
+      alert('Failed to save starting weights: ' + error.message)
     }
   }
 
@@ -134,6 +142,7 @@ export function SetupWeights({ unit }: SetupWeightsProps) {
           }
           unit={unit}
           onSave={(value) => {
+            console.log(`Setting ${showNumberPad} weight to:`, value)
             if (showNumberPad === 'squat') setSquatMax(value)
             else if (showNumberPad === 'bench') setBenchMax(value)
             else if (showNumberPad === 'deadlift') setDeadliftMax(value)
