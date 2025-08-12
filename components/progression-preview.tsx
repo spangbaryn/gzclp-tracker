@@ -13,13 +13,6 @@ export function ProgressionPreview({ exercise, unit }: ProgressionPreviewProps) 
   // Check if all sets are completed
   const allSetsCompleted = exercise.sets.every(set => set.completed)
   
-  console.log('ProgressionPreview render:', {
-    exercise: exercise.name,
-    tier: exercise.tier,
-    stage: exercise.stage,
-    sets: exercise.sets,
-    allSetsCompleted
-  })
   
   if (!allSetsCompleted) {
     return null // Don't show preview until all sets are done
@@ -54,11 +47,6 @@ export function ProgressionPreview({ exercise, unit }: ProgressionPreviewProps) 
   }
   // T3 doesn't have stages, stays at 1
   
-  console.log('Stage parsing result:', { 
-    tier: exercise.tier, 
-    stageString: exercise.stage, 
-    parsedStage: currentStage 
-  })
   
   const nextWorkout = calculateNextWorkout({
     exercise: exercise.type,

@@ -67,12 +67,6 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
           const stageKey = exercise.tier === 1 ? 't1Stage' : 't2Stage'
           const weightKey = exercise.tier === 1 ? 't1Weight' : 't2Weight'
           
-          // Debug logging
-          console.log(`Exercise: ${exercise.name}, Tier: ${exercise.tier}, Type: ${exercise.type}`)
-          console.log(`Progression:`, prog)
-          console.log(`Stage value from DB: ${prog[stageKey]}`)
-          console.log(`Weight from progression: ${prog[weightKey]}`)
-          console.log(`Max from settings: ${settings[`${exercise.type}Max` as keyof UserSettings]}`)
           
           // Ensure stage is within valid range (1-3)
           const stageValue = Math.max(1, Math.min(3, prog[stageKey] || 1)) as 1 | 2 | 3
@@ -87,7 +81,6 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
             weight = Math.min(weight, 2000)
           }
           
-          console.log(`Final weight: ${weight}, Sets: ${stage.sets}, Reps: ${stage.reps}, Stage name: ${stage.name}`)
           
           sets = stage.sets
           reps = stage.reps
@@ -120,11 +113,6 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
         stage: stageName
       }
       
-      console.log(`Created exercise data for ${exercise.name} T${exercise.tier}:`, {
-        stageName,
-        sets: exerciseData.sets.length,
-        lastSetIsAmrap: exerciseData.sets[exerciseData.sets.length - 1]?.isAmrap
-      })
       
       return exerciseData
     })
@@ -148,7 +136,6 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
   }
 
   const toggleSet = (exerciseIndex: number, setIndex: number) => {
-    console.log('toggleSet called:', { exerciseIndex, setIndex })
     
     setExercisesData(prev => {
       const newData = [...prev]
@@ -157,19 +144,6 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
       const wasCompleted = set.completed
       set.completed = !set.completed
       
-      console.log('Set toggled:', { 
-        exerciseName: exercise.name,
-        exerciseTier: exercise.tier,
-        exerciseIndex, 
-        setIndex, 
-        wasCompleted, 
-        nowCompleted: set.completed,
-        isAmrap: set.isAmrap,
-        reps: set.reps,
-        isLastSet: setIndex === exercise.sets.length - 1,
-        isLastExercise: exerciseIndex === newData.length - 1,
-        allSetsCompleted: exercise.sets.every(s => s.completed)
-      })
       
       // Handle timer logic
       if (!wasCompleted && set.completed) {
@@ -196,18 +170,10 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
   }
 
   const updateAmrapReps = (exerciseIndex: number, setIndex: number, value: number) => {
-    console.log('updateAmrapReps called:', { exerciseIndex, setIndex, value })
     setExercisesData(prev => {
       const newData = [...prev]
       const exercise = newData[exerciseIndex]
       newData[exerciseIndex].sets[setIndex].reps = value
-      console.log('AMRAP reps updated:', {
-        exerciseName: exercise.name,
-        exerciseTier: exercise.tier,
-        setIndex,
-        newReps: value,
-        set: newData[exerciseIndex].sets[setIndex]
-      })
       return newData
     })
   }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import type { ExerciseData } from './workout-view'
 import { NumberPadModal } from './number-pad-modal'
 import { ProgressionPreview } from './progression-preview'
@@ -30,19 +30,8 @@ export function ExerciseCard({
   const tierClass = `tier-${exercise.tier}`
   const tierName = exercise.tier === 1 ? 'T1' : exercise.tier === 2 ? 'T2' : 'T3'
   
-  useEffect(() => {
-    console.log('ExerciseCard mounted/updated:', {
-      name: exercise.name,
-      tier: exercise.tier,
-      stage: exercise.stage,
-      setsCount: exercise.sets.length,
-      lastSetIsAmrap: exercise.sets[exercise.sets.length - 1]?.isAmrap
-    })
-  }, [exercise])
-  
   const handleSetClick = (setIndex: number) => {
     const set = exercise.sets[setIndex]
-    console.log('handleSetClick - Exercise:', exercise.name, 'Tier:', exercise.tier, 'Set:', setIndex, 'isAmrap:', set.isAmrap, 'completed:', set.completed)
     if (set.isAmrap && !set.completed) {
       // For AMRAP sets, show modal first to get reps
       setAmrapSetIndex(setIndex)
@@ -143,12 +132,10 @@ export function ExerciseCard({
             setAmrapSetIndex(null)
           }}
           onSave={(reps) => {
-            console.log('AMRAP Save clicked - Exercise:', exercise.name, 'Tier:', exercise.tier, 'reps:', reps, 'exerciseIndex:', exerciseIndex, 'setIndex:', amrapSetIndex)
             // Update the reps
             onUpdateAmrapReps(exerciseIndex, amrapSetIndex, reps)
             // Mark the set as completed
             onToggleSet(exerciseIndex, amrapSetIndex)
-            console.log('AMRAP set should now be completed for', exercise.name, 'T' + exercise.tier)
             setShowAmrapModal(false)
             setAmrapSetIndex(null)
           }}
