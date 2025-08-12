@@ -21,10 +21,12 @@ export function NumberPadModal({
   unit = 'lbs'
 }: NumberPadModalProps) {
   const [value, setValue] = useState(initialValue.toString())
+  const [isFirstInput, setIsFirstInput] = useState(true)
 
   useEffect(() => {
     if (isOpen) {
       setValue(initialValue.toString())
+      setIsFirstInput(true) // Reset the flag when modal opens
       // Prevent body scroll when modal is open
       document.body.style.overflow = 'hidden'
       document.body.style.position = 'fixed'
@@ -47,21 +49,26 @@ export function NumberPadModal({
   if (!isOpen || !mounted) return null
 
   const handleNumberPress = (num: string) => {
-    if (value === '0') {
+    if (value === '0' || isFirstInput) {
       setValue(num)
+      setIsFirstInput(false)
     } else {
       setValue(value + num)
     }
   }
 
   const handleDecimalPress = () => {
-    if (!value.includes('.')) {
+    if (isFirstInput) {
+      setValue('0.')
+      setIsFirstInput(false)
+    } else if (!value.includes('.')) {
       setValue(value + '.')
     }
   }
 
   const handleClear = () => {
     setValue('0')
+    setIsFirstInput(false) // User explicitly cleared, so don't auto-clear on next input
   }
 
   const handleBackspace = () => {
@@ -70,6 +77,7 @@ export function NumberPadModal({
     } else {
       setValue('0')
     }
+    setIsFirstInput(false) // User is editing, so don't auto-clear
   }
 
   const handleSave = () => {
