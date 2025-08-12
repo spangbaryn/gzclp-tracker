@@ -45,9 +45,9 @@ export function SettingsForm({ settings }: SettingsFormProps) {
         console.log('Reset response:', response.status)
         
         if (response.ok) {
-          alert('Data reset successfully!')
-          // Force reload to show reset values
-          window.location.href = '/'
+          console.log('Reset successful, navigating to home...')
+          // Use replace to ensure we don't stay on settings page
+          window.location.replace('/')
         } else {
           const error = await response.text()
           console.error('Reset failed:', error)

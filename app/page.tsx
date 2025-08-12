@@ -16,6 +16,7 @@ export default async function WorkoutPage() {
   const needsSetup = settings.squatMax === 0 || settings.benchMax === 0 || 
                      settings.deadliftMax === 0 || settings.ohpMax === 0
   
+  console.log('=== Workout Page Loading ===')
   console.log('Settings:', settings)
   console.log('Needs setup:', needsSetup)
   console.log('Weight values:', {
@@ -24,6 +25,7 @@ export default async function WorkoutPage() {
     deadliftMax: settings.deadliftMax,
     ohpMax: settings.ohpMax
   })
+  console.log('=========================')
 
   if (needsSetup) {
     return (
