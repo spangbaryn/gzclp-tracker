@@ -7,6 +7,7 @@ export async function POST(request: NextRequest) {
     const { squatMax, benchMax, deadliftMax, ohpMax } = await request.json()
     console.log('Received starting weights:', { squatMax, benchMax, deadliftMax, ohpMax })
     const user = await getOrCreateUser()
+    console.log('User settings before setup:', user.settings)
 
     // Update settings with starting weights
     await prisma.userSettings.update({
@@ -54,6 +55,14 @@ export async function POST(request: NextRequest) {
       where: { userId: user.id }
     })
     console.log('Updated progressions:', updatedProgressions)
+    
+    // Verify settings weren't changed
+    const finalUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      include: { settings: true }
+    })
+    console.log('User settings after setup:', finalUser?.settings)
+    console.log('Current workout should still be:', finalUser?.settings?.currentWorkout)
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -70,6 +70,13 @@ export async function POST() {
       include: { settings: true }
     })
     console.log('Final settings after reset:', verifyUser?.settings)
+    console.log('CRITICAL CHECK - currentWorkout should be 0:', verifyUser?.settings?.currentWorkout)
+    
+    if (verifyUser?.settings?.currentWorkout !== 0) {
+      console.error('ERROR: currentWorkout is not 0 after reset!')
+      throw new Error('Reset failed - currentWorkout not reset to 0')
+    }
+    
     console.log('Reset complete')
     return NextResponse.json({ success: true })
   } catch (error) {

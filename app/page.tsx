@@ -47,6 +47,12 @@ export default async function WorkoutPage() {
   console.log('Settings currentWorkout value:', settings.currentWorkout)
   console.log('Current workout index:', currentWorkoutIndex)
   console.log('Current workout key:', currentWorkoutKey)
+  console.log('Expected workout mapping:', {
+    '0': 'A1',
+    '1': 'B1', 
+    '2': 'A2',
+    '3': 'B2'
+  })
   console.log('Full settings object:', settings)
 
   return (
