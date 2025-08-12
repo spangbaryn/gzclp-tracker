@@ -147,12 +147,20 @@ export function SettingsForm({ settings }: SettingsFormProps) {
 
       {showNumberPad && (
         <NumberPadModal
+          isOpen={!!showNumberPad}
           initialValue={
             showNumberPad === 'squat' ? squatMax :
             showNumberPad === 'bench' ? benchMax :
             showNumberPad === 'deadlift' ? deadliftMax :
             ohpMax
           }
+          title={
+            showNumberPad === 'squat' ? 'Squat Weight' :
+            showNumberPad === 'bench' ? 'Bench Press Weight' :
+            showNumberPad === 'deadlift' ? 'Deadlift Weight' :
+            'Overhead Press Weight'
+          }
+          unit={unit}
           onSave={(value) => {
             if (showNumberPad === 'squat') setSquatMax(value)
             else if (showNumberPad === 'bench') setBenchMax(value)
@@ -160,7 +168,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             else if (showNumberPad === 'ohp') setOhpMax(value)
             setShowNumberPad(null)
           }}
-          onCancel={() => setShowNumberPad(null)}
+          onClose={() => setShowNumberPad(null)}
         />
       )}
     </>

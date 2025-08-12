@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { CompleteModal } from './complete-modal'
 import type { ExerciseData } from './workout-view'
 import type { Progression } from '@prisma/client'
@@ -20,7 +19,6 @@ export function CompleteWorkoutButton({
 }: CompleteWorkoutButtonProps) {
   const [showModal, setShowModal] = useState(false)
   const [completedSets, setCompletedSets] = useState(0)
-  const router = useRouter()
 
   const handleComplete = async () => {
     try {
