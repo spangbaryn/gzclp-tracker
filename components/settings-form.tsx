@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { NumberPadModal } from './number-pad-modal'
 import type { UserSettings } from '@prisma/client'
 
 interface SettingsFormProps {
@@ -11,11 +10,6 @@ interface SettingsFormProps {
 
 export function SettingsForm({ settings }: SettingsFormProps) {
   const [unit, setUnit] = useState(settings.unit)
-  const [squatMax, setSquatMax] = useState(settings.squatMax)
-  const [benchMax, setBenchMax] = useState(settings.benchMax)
-  const [deadliftMax, setDeadliftMax] = useState(settings.deadliftMax)
-  const [ohpMax, setOhpMax] = useState(settings.ohpMax)
-  const [showNumberPad, setShowNumberPad] = useState<string | null>(null)
   const router = useRouter()
 
   const handleSave = async () => {
@@ -24,11 +18,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          unit,
-          squatMax,
-          benchMax,
-          deadliftMax,
-          ohpMax
+          unit
         })
       })
       
@@ -87,68 +77,11 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             KG
           </button>
         </div>
-      </div>
-
-      <div className="glass glass-gradient rounded-lg p-6 mb-4">
-        <h3 className="text-sm font-bold tracking-[2px] uppercase text-[#a8a8a8] mb-6">
-          Starting Weights
-        </h3>
-        
-        <div className="space-y-4">
-          <div>
-            <label className="block mb-2 text-muted text-xs font-bold uppercase tracking-[1.5px]">
-              Squat (85% 5RM)
-            </label>
-            <button
-              onClick={() => setShowNumberPad('squat')}
-              className="w-full py-3 px-4 rounded-lg border-2 border-white/10 bg-white/5 text-foreground text-base font-semibold transition-all focus:outline-none focus:border-white/30 focus:bg-white/10 hover:bg-white/10 text-left"
-            >
-              {squatMax || 0} {unit}
-            </button>
-          </div>
-
-          <div>
-            <label className="block mb-2 text-muted text-xs font-bold uppercase tracking-[1.5px]">
-              Bench Press (85% 5RM)
-            </label>
-            <button
-              onClick={() => setShowNumberPad('bench')}
-              className="w-full py-3 px-4 rounded-lg border-2 border-white/10 bg-white/5 text-foreground text-base font-semibold transition-all focus:outline-none focus:border-white/30 focus:bg-white/10 hover:bg-white/10 text-left"
-            >
-              {benchMax || 0} {unit}
-            </button>
-          </div>
-
-          <div>
-            <label className="block mb-2 text-muted text-xs font-bold uppercase tracking-[1.5px]">
-              Deadlift (85% 5RM)
-            </label>
-            <button
-              onClick={() => setShowNumberPad('deadlift')}
-              className="w-full py-3 px-4 rounded-lg border-2 border-white/10 bg-white/5 text-foreground text-base font-semibold transition-all focus:outline-none focus:border-white/30 focus:bg-white/10 hover:bg-white/10 text-left"
-            >
-              {deadliftMax || 0} {unit}
-            </button>
-          </div>
-
-          <div>
-            <label className="block mb-2 text-muted text-xs font-bold uppercase tracking-[1.5px]">
-              Overhead Press (85% 5RM)
-            </label>
-            <button
-              onClick={() => setShowNumberPad('ohp')}
-              className="w-full py-3 px-4 rounded-lg border-2 border-white/10 bg-white/5 text-foreground text-base font-semibold transition-all focus:outline-none focus:border-white/30 focus:bg-white/10 hover:bg-white/10 text-left"
-            >
-              {ohpMax || 0} {unit}
-            </button>
-          </div>
-        </div>
-
         <button
           onClick={handleSave}
           className="w-full py-[18px] rounded-lg glass border-2 border-white/20 text-sm tracking-[2px] uppercase font-bold text-foreground cursor-pointer mt-6 transition-all min-h-[56px] hover:bg-white/10 hover:border-white/30 hover:shadow-lg hover:shadow-white/5 focus:outline-2 focus:outline-ring focus:-outline-offset-2 active:scale-[0.99]"
         >
-          Save Settings
+          Save Units
         </button>
       </div>
 
@@ -166,33 +99,6 @@ export function SettingsForm({ settings }: SettingsFormProps) {
           Reset All Data
         </button>
       </div>
-
-      {showNumberPad && (
-        <NumberPadModal
-          isOpen={!!showNumberPad}
-          initialValue={
-            showNumberPad === 'squat' ? squatMax :
-            showNumberPad === 'bench' ? benchMax :
-            showNumberPad === 'deadlift' ? deadliftMax :
-            ohpMax
-          }
-          title={
-            showNumberPad === 'squat' ? 'Squat Weight' :
-            showNumberPad === 'bench' ? 'Bench Press Weight' :
-            showNumberPad === 'deadlift' ? 'Deadlift Weight' :
-            'Overhead Press Weight'
-          }
-          unit={unit}
-          onSave={(value) => {
-            if (showNumberPad === 'squat') setSquatMax(value)
-            else if (showNumberPad === 'bench') setBenchMax(value)
-            else if (showNumberPad === 'deadlift') setDeadliftMax(value)
-            else if (showNumberPad === 'ohp') setOhpMax(value)
-            setShowNumberPad(null)
-          }}
-          onClose={() => setShowNumberPad(null)}
-        />
-      )}
     </>
   )
 }
