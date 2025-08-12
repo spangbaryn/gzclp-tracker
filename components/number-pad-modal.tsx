@@ -100,27 +100,15 @@ export function NumberPadModal({
       
       {/* Modal */}
       <div className="fixed top-0 left-0 right-0 bottom-0 z-[9999] bg-background flex flex-col w-screen h-screen overflow-hidden overscroll-none touch-none" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh', WebkitBackfaceVisibility: 'hidden', transform: 'translateZ(0)' }}>
-        {/* Header */}
-        <div className="glass-heavy border-b border-white/10 px-4 py-3 flex items-center justify-between flex-shrink-0">
-        <button
-          onClick={onClose}
-          className="text-muted hover:text-foreground transition-colors text-sm font-semibold uppercase tracking-wider"
-        >
-          Cancel
-        </button>
-        <h2 className="text-sm font-bold uppercase tracking-[2px] text-foreground">
-          {title}
-        </h2>
-        <button
-          onClick={handleSave}
-          className="text-foreground hover:text-primary transition-colors text-sm font-semibold uppercase tracking-wider"
-        >
-          Save
-        </button>
-      </div>
+        {/* Header with just title */}
+        <div className="glass-heavy border-b border-white/10 px-4 py-6 pt-safe flex items-center justify-center flex-shrink-0">
+          <h2 className="text-sm font-bold uppercase tracking-[2px] text-foreground">
+            {title}
+          </h2>
+        </div>
 
-      {/* Display */}
-      <div className="flex-1 flex flex-col items-center justify-center px-8 min-h-0">
+        {/* Display */}
+        <div className="flex-1 flex flex-col items-center justify-center px-8 min-h-0">
         <div className="text-center">
           <div className="text-5xl sm:text-6xl font-bold text-foreground mb-2 tracking-wider">
             {value}
@@ -136,6 +124,22 @@ export function NumberPadModal({
           className="mt-4 mb-4 px-6 py-2 rounded-full glass border border-white/20 text-sm uppercase tracking-wider text-muted hover:text-foreground hover:bg-white/10 transition-all"
         >
           Clear
+        </button>
+      </div>
+
+      {/* Action buttons */}
+      <div className="px-4 pb-4 flex gap-3 flex-shrink-0">
+        <button
+          onClick={onClose}
+          className="flex-1 py-4 rounded-xl glass border-2 border-white/20 text-sm font-bold uppercase tracking-wider text-muted hover:text-foreground hover:bg-white/10 transition-all"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSave}
+          className="flex-1 py-4 rounded-xl glass border-2 border-primary/50 bg-primary/10 text-sm font-bold uppercase tracking-wider text-foreground hover:bg-primary/20 hover:border-primary transition-all"
+        >
+          Save
         </button>
       </div>
 
