@@ -52,7 +52,7 @@ export function NavTabs() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[100] glass-heavy border-t border-white/10" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      <div className="flex" style={{ height: '56px' }}>
+      <div className="flex" style={{ height: '48px' }}>
         {tabs.map((tab) => (
           <Link
             key={tab.id}
