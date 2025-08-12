@@ -14,27 +14,29 @@ export function NavTabs() {
   const router = useRouter()
 
   return (
-    <div className="sticky top-0 z-[100] flex glass-heavy border-b border-white/10">
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          onClick={() => router.push(tab.href)}
-          className={`
-            flex-1 py-4 text-center border-none bg-transparent
-            text-xs font-bold cursor-pointer transition-all
-            uppercase tracking-[1.5px] relative
-            focus:outline-2 focus:outline-ring focus:-outline-offset-2
-            hover:bg-white/5
-            ${pathname === tab.href ? 'text-foreground' : 'text-muted'}
-            after:content-[''] after:absolute after:bottom-[-1px]
-            after:left-0 after:right-0 after:h-[2px] after:bg-foreground
-            after:transition-transform
-            ${pathname === tab.href ? 'after:scale-x-100' : 'after:scale-x-0'}
-          `}
-        >
-          {tab.label}
-        </button>
-      ))}
+    <div className="fixed bottom-0 left-0 right-0 z-[100] glass-heavy border-t border-white/10 pb-safe">
+      <div className="flex">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => router.push(tab.href)}
+            className={`
+              flex-1 py-4 text-center border-none bg-transparent
+              text-xs font-bold cursor-pointer transition-all
+              uppercase tracking-[1px] relative
+              focus:outline-2 focus:outline-ring focus:-outline-offset-2
+              active:bg-white/10
+              ${pathname === tab.href ? 'text-foreground' : 'text-muted'}
+              before:content-[''] before:absolute before:top-0
+              before:left-0 before:right-0 before:h-[2px] before:bg-foreground
+              before:transition-transform
+              ${pathname === tab.href ? 'before:scale-x-100' : 'before:scale-x-0'}
+            `}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
     </div>
   )
 }
