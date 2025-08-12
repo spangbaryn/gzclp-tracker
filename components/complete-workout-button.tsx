@@ -23,29 +23,41 @@ export function CompleteWorkoutButton({
   const router = useRouter()
 
   const handleComplete = async () => {
-    // Calculate completed sets
-    const totalCompletedSets = exercisesData.reduce((sum, ex) => 
-      sum + ex.sets.filter(s => s.completed).length, 0
-    )
-    setCompletedSets(totalCompletedSets)
+    try {
+      // Calculate completed sets
+      const totalCompletedSets = exercisesData.reduce((sum, ex) => 
+        sum + ex.sets.filter(s => s.completed).length, 0
+      )
+      setCompletedSets(totalCompletedSets)
 
-    // Save workout to database
-    await fetch('/api/workouts/complete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        workoutKey,
-        exercises: exercisesData,
-        progressions
+      // Save workout to database
+      const response = await fetch('/api/workouts/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workoutKey,
+          exercises: exercisesData,
+          progressions
+        })
       })
-    })
 
-    setShowModal(true)
+      if (!response.ok) {
+        throw new Error('Failed to save workout')
+      }
+
+      setShowModal(true)
+    } catch (error) {
+      console.error('Error completing workout:', error)
+      alert('Failed to save workout. Please try again.')
+    }
   }
 
   const handleModalClose = () => {
     setShowModal(false)
+    // Force a hard refresh to ensure new workout loads
     router.refresh()
+    // Also push to the same route to ensure refresh
+    router.push('/')
   }
 
   return (
