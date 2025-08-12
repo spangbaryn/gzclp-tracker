@@ -18,6 +18,12 @@ export default async function WorkoutPage() {
   
   console.log('Settings:', settings)
   console.log('Needs setup:', needsSetup)
+  console.log('Weight values:', {
+    squatMax: settings.squatMax,
+    benchMax: settings.benchMax,
+    deadliftMax: settings.deadliftMax,
+    ohpMax: settings.ohpMax
+  })
 
   if (needsSetup) {
     return (
