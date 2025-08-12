@@ -27,8 +27,12 @@ export function NumberPadModal({
       setValue(initialValue.toString())
       // Prevent body scroll when modal is open
       document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
+      document.body.style.width = '100%'
       return () => {
         document.body.style.overflow = ''
+        document.body.style.position = ''
+        document.body.style.width = ''
       }
     }
   }, [isOpen, initialValue])
@@ -90,9 +94,14 @@ export function NumberPadModal({
   ]
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] bg-background flex flex-col h-full w-full overflow-hidden overscroll-none touch-none">
-      {/* Header */}
-      <div className="glass-heavy border-b border-white/10 px-4 py-3 flex items-center justify-between flex-shrink-0">
+    <>
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black/50 z-[9998]" />
+      
+      {/* Modal */}
+      <div className="fixed top-0 left-0 right-0 bottom-0 z-[9999] bg-background flex flex-col w-screen h-screen overflow-hidden overscroll-none touch-none" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh', WebkitBackfaceVisibility: 'hidden', transform: 'translateZ(0)' }}>
+        {/* Header */}
+        <div className="glass-heavy border-b border-white/10 px-4 py-3 flex items-center justify-between flex-shrink-0">
         <button
           onClick={onClose}
           className="text-muted hover:text-foreground transition-colors text-sm font-semibold uppercase tracking-wider"
@@ -150,7 +159,7 @@ export function NumberPadModal({
           ))}
         </div>
       </div>
-    </div>,
+    </>,
     document.body
   )
 }
