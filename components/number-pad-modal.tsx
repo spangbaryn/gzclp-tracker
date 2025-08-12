@@ -82,9 +82,9 @@ export function NumberPadModal({
   ]
 
   return (
-    <div className="fixed inset-0 z-[1001] bg-background flex flex-col h-[100vh] h-[100dvh] w-full overflow-hidden overscroll-none touch-none">
+    <div className="fixed inset-0 z-[1001] bg-background flex flex-col min-h-screen h-screen w-full overflow-hidden overscroll-none touch-none">
       {/* Header */}
-      <div className="glass-heavy border-b border-white/10 px-4 py-4 flex items-center justify-between safe-top">
+      <div className="glass-heavy border-b border-white/10 px-4 py-3 flex items-center justify-between flex-shrink-0">
         <button
           onClick={onClose}
           className="text-muted hover:text-foreground transition-colors text-sm font-semibold uppercase tracking-wider"
@@ -103,12 +103,12 @@ export function NumberPadModal({
       </div>
 
       {/* Display */}
-      <div className="flex-1 flex flex-col items-center justify-center px-8">
-        <div className="text-center mb-12">
-          <div className="text-6xl font-bold text-foreground mb-2 tracking-wider">
+      <div className="flex-1 flex flex-col items-center justify-center px-8 min-h-0">
+        <div className="text-center">
+          <div className="text-5xl sm:text-6xl font-bold text-foreground mb-2 tracking-wider">
             {value}
           </div>
-          <div className="text-xl text-muted uppercase tracking-[2px]">
+          <div className="text-lg sm:text-xl text-muted uppercase tracking-[2px]">
             {unit}
           </div>
         </div>
@@ -116,22 +116,22 @@ export function NumberPadModal({
         {/* Clear button */}
         <button
           onClick={handleClear}
-          className="mb-8 px-6 py-2 rounded-full glass border border-white/20 text-sm uppercase tracking-wider text-muted hover:text-foreground hover:bg-white/10 transition-all"
+          className="mt-4 mb-4 px-6 py-2 rounded-full glass border border-white/20 text-sm uppercase tracking-wider text-muted hover:text-foreground hover:bg-white/10 transition-all"
         >
           Clear
         </button>
       </div>
 
       {/* Number pad */}
-      <div className="glass-heavy border-t border-white/10 p-4 pb-8 safe-bottom">
-        <div className="grid grid-cols-3 gap-3 max-w-sm mx-auto">
+      <div className="glass-heavy border-t border-white/10 p-3 pb-safe flex-shrink-0">
+        <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto">
           {buttons.map((button) => (
             <button
               key={button.label}
               onClick={button.action}
               className={`
-                h-16 rounded-xl glass border-2 border-white/10 
-                text-2xl font-semibold text-foreground
+                h-14 sm:h-16 rounded-xl glass border-2 border-white/10 
+                text-xl sm:text-2xl font-semibold text-foreground
                 hover:bg-white/10 hover:border-white/20
                 active:scale-95 transition-all
                 ${button.label === '⌫' ? 'text-muted' : ''}

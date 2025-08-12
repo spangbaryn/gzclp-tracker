@@ -118,6 +118,10 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
   
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
   /* Subtle gradient overlay for depth */
   .glass-gradient {
     position: relative;
