@@ -40,8 +40,11 @@ export default async function WorkoutPage() {
 
   // Debug logging
   console.log('Loading workout page:')
+  console.log('User ID:', user.id)
+  console.log('Settings currentWorkout value:', settings.currentWorkout)
   console.log('Current workout index:', currentWorkoutIndex)
   console.log('Current workout key:', currentWorkoutKey)
+  console.log('Full settings object:', settings)
 
   return (
     <AppContainer>

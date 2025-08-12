@@ -3,19 +3,16 @@
 import { useState } from 'react'
 import { CompleteModal } from './complete-modal'
 import type { ExerciseData } from './workout-view'
-import type { Progression } from '@prisma/client'
 import type { WorkoutType } from '@/lib/constants'
 
 interface CompleteWorkoutButtonProps {
   workoutKey: WorkoutType
   exercisesData: ExerciseData[]
-  progressions: Progression[]
 }
 
 export function CompleteWorkoutButton({ 
   workoutKey, 
-  exercisesData,
-  progressions 
+  exercisesData
 }: CompleteWorkoutButtonProps) {
   const [showModal, setShowModal] = useState(false)
   const [completedSets, setCompletedSets] = useState(0)
@@ -29,22 +26,30 @@ export function CompleteWorkoutButton({
       setCompletedSets(totalCompletedSets)
 
       // Save workout to database
+      console.log('Sending workout completion request...')
+      console.log('Workout key:', workoutKey)
+      console.log('Exercises data:', exercisesData)
+      
       const response = await fetch('/api/workouts/complete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           workoutKey,
-          exercises: exercisesData,
-          progressions
+          exercises: exercisesData
         })
       })
 
+      console.log('Response status:', response.status)
+      
       if (!response.ok) {
-        throw new Error('Failed to save workout')
+        const errorText = await response.text()
+        console.error('Error response:', errorText)
+        throw new Error(`Failed to save workout: ${errorText}`)
       }
 
       // Ensure the response is fully processed
-      await response.json()
+      const result = await response.json()
+      console.log('Workout completion result:', result)
 
       setShowModal(true)
     } catch (error) {

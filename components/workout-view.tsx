@@ -169,7 +169,6 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
       <CompleteWorkoutButton 
         workoutKey={workoutKey}
         exercisesData={exercisesData}
-        progressions={progressions}
       />
     </>
   )
