@@ -1,6 +1,7 @@
 'use client'
 
 import { calculateNextWorkout } from '@/lib/progression-calculator'
+import { stageConfig } from '@/lib/constants'
 import type { ExerciseData } from './workout-view'
 
 interface ProgressionPreviewProps {
@@ -14,6 +15,8 @@ export function ProgressionPreview({ exercise, unit }: ProgressionPreviewProps) 
   
   console.log('ProgressionPreview render:', {
     exercise: exercise.name,
+    tier: exercise.tier,
+    stage: exercise.stage,
     sets: exercise.sets,
     allSetsCompleted
   })
@@ -31,8 +34,31 @@ export function ProgressionPreview({ exercise, unit }: ProgressionPreviewProps) 
     sum + (set.completed ? set.reps : 0), 0
   )
   
-  // Parse stage from string (e.g., "Stage 1" -> 1)
-  const currentStage = parseInt(exercise.stage.replace('Stage ', '')) || 1
+  // Parse stage from string
+  // T1 stages: "5×3+", "6×2+", "10×1+" -> extract from stageConfig
+  // T2 stages: "Stage 1", "Stage 2", "Stage 3" -> extract number
+  let currentStage = 1
+  
+  if (exercise.tier === 1) {
+    // For T1, match the stage name to find the stage number
+    const t1Stages = stageConfig.t1
+    for (const [stageNum, config] of Object.entries(t1Stages)) {
+      if (config.name === exercise.stage) {
+        currentStage = parseInt(stageNum)
+        break
+      }
+    }
+  } else if (exercise.tier === 2) {
+    // For T2, parse "Stage X" format
+    currentStage = parseInt(exercise.stage.replace('Stage ', '')) || 1
+  }
+  // T3 doesn't have stages, stays at 1
+  
+  console.log('Stage parsing result:', { 
+    tier: exercise.tier, 
+    stageString: exercise.stage, 
+    parsedStage: currentStage 
+  })
   
   const nextWorkout = calculateNextWorkout({
     exercise: exercise.type,

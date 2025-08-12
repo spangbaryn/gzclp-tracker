@@ -32,6 +32,7 @@ export function ExerciseCard({
   
   const handleSetClick = (setIndex: number) => {
     const set = exercise.sets[setIndex]
+    console.log('handleSetClick - Exercise:', exercise.name, 'Tier:', exercise.tier, 'Set:', setIndex, 'isAmrap:', set.isAmrap, 'completed:', set.completed)
     if (set.isAmrap && !set.completed) {
       // For AMRAP sets, show modal first to get reps
       setAmrapSetIndex(setIndex)
@@ -132,12 +133,12 @@ export function ExerciseCard({
             setAmrapSetIndex(null)
           }}
           onSave={(reps) => {
-            console.log('AMRAP Save clicked - reps:', reps, 'exerciseIndex:', exerciseIndex, 'setIndex:', amrapSetIndex)
+            console.log('AMRAP Save clicked - Exercise:', exercise.name, 'Tier:', exercise.tier, 'reps:', reps, 'exerciseIndex:', exerciseIndex, 'setIndex:', amrapSetIndex)
             // Update the reps
             onUpdateAmrapReps(exerciseIndex, amrapSetIndex, reps)
             // Mark the set as completed
             onToggleSet(exerciseIndex, amrapSetIndex)
-            console.log('AMRAP set should now be completed')
+            console.log('AMRAP set should now be completed for', exercise.name, 'T' + exercise.tier)
             setShowAmrapModal(false)
             setAmrapSetIndex(null)
           }}
