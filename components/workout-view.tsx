@@ -74,10 +74,8 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
           const stageValue = Math.max(1, Math.min(3, prog[stageKey] || 1)) as 1 | 2 | 3
           const stage = stageConfig[tierKey][stageValue]
           
-          // Get weight with fallback to calculated max
-          weight = prog[weightKey] || (exercise.tier === 1 
-            ? settings[`${exercise.type}Max` as keyof UserSettings] as number
-            : Math.round((settings[`${exercise.type}Max` as keyof UserSettings] as number) * 0.65))
+          // Use the weight from progression
+          weight = prog[weightKey] || 0
           
           // Ensure weight is reasonable (not extremely high)
           // Don't enforce minimum if weight is explicitly 0

@@ -34,12 +34,16 @@ export async function POST(request: NextRequest) {
       const maxWeight = maxWeights[prog.liftType]
       
       if (maxWeight) {
-        console.log(`Updating progression for ${prog.liftType}: T1=${maxWeight}, T2=${Math.round(maxWeight * 0.65)}`)
+        // T1 uses the entered weight (which is already 85% of 5RM)
+        // T2 uses 65% of the T1 weight
+        const t1Weight = maxWeight
+        const t2Weight = Math.round(maxWeight * 0.65)
+        console.log(`Updating progression for ${prog.liftType}: T1=${t1Weight}, T2=${t2Weight}`)
         await prisma.progression.update({
           where: { id: prog.id },
           data: {
-            t1Weight: maxWeight,
-            t2Weight: Math.round(maxWeight * 0.65)
+            t1Weight: t1Weight,
+            t2Weight: t2Weight
           }
         })
       }
