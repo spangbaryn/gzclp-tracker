@@ -3,16 +3,21 @@ import { prisma } from '@/lib/db'
 import { getOrCreateUser } from '@/lib/user'
 
 export async function POST() {
+  console.log('Reset API called')
   try {
     const user = await getOrCreateUser()
+    console.log('User found:', user.id)
 
     // Delete all workouts
-    await prisma.workout.deleteMany({
+    console.log('Deleting workouts...')
+    const deletedWorkouts = await prisma.workout.deleteMany({
       where: { userId: user.id }
     })
+    console.log('Deleted workouts:', deletedWorkouts.count)
 
     // Reset settings
-    await prisma.userSettings.update({
+    console.log('Resetting settings...')
+    const updatedSettings = await prisma.userSettings.update({
       where: { userId: user.id },
       data: {
         currentWorkout: 0,
@@ -22,9 +27,11 @@ export async function POST() {
         ohpMax: 0
       }
     })
+    console.log('Updated settings:', updatedSettings)
 
     // Reset progressions
-    await prisma.progression.updateMany({
+    console.log('Resetting progressions...')
+    const updatedProgressions = await prisma.progression.updateMany({
       where: { userId: user.id },
       data: {
         t1Stage: 1,
@@ -33,7 +40,9 @@ export async function POST() {
         t2Weight: 0
       }
     })
+    console.log('Updated progressions:', updatedProgressions.count)
 
+    console.log('Reset complete')
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error resetting data:', error)

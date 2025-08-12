@@ -36,19 +36,28 @@ export function SettingsForm({ settings }: SettingsFormProps) {
   }
 
   const handleReset = async () => {
-    if (confirm('Delete all data?')) {
+    console.log('Reset button clicked')
+    const confirmReset = confirm('This will delete all your workout history and reset your progress. Are you sure?')
+    console.log('User confirmed:', confirmReset)
+    
+    if (confirmReset) {
       try {
+        console.log('Calling reset API...')
         const response = await fetch('/api/reset', { method: 'POST' })
+        console.log('Reset response:', response.status)
+        
         if (response.ok) {
           alert('Data reset successfully!')
           // Force reload to show reset values
           window.location.href = '/'
         } else {
+          const error = await response.text()
+          console.error('Reset failed:', error)
           alert('Failed to reset data')
         }
       } catch (error) {
         console.error('Error resetting data:', error)
-        alert('Failed to reset data')
+        alert('Failed to reset data: ' + error.message)
       }
     }
   }
