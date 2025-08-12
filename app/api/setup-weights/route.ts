@@ -5,6 +5,7 @@ import { getOrCreateUser } from '@/lib/user'
 export async function POST(request: NextRequest) {
   try {
     const { squatMax, benchMax, deadliftMax, ohpMax } = await request.json()
+    console.log('Received starting weights:', { squatMax, benchMax, deadliftMax, ohpMax })
     const user = await getOrCreateUser()
 
     // Update settings with starting weights
@@ -33,6 +34,7 @@ export async function POST(request: NextRequest) {
       const maxWeight = maxWeights[prog.liftType]
       
       if (maxWeight) {
+        console.log(`Updating progression for ${prog.liftType}: T1=${maxWeight}, T2=${Math.round(maxWeight * 0.65)}`)
         await prisma.progression.update({
           where: { id: prog.id },
           data: {
@@ -42,6 +44,12 @@ export async function POST(request: NextRequest) {
         })
       }
     }
+    
+    // Verify the updates
+    const updatedProgressions = await prisma.progression.findMany({
+      where: { userId: user.id }
+    })
+    console.log('Updated progressions:', updatedProgressions)
 
     return NextResponse.json({ success: true })
   } catch (error) {

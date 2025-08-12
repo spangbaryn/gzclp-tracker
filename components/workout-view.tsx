@@ -67,6 +67,8 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
           console.log(`Exercise: ${exercise.name}, Tier: ${exercise.tier}, Type: ${exercise.type}`)
           console.log(`Progression:`, prog)
           console.log(`Stage value from DB: ${prog[stageKey]}`)
+          console.log(`Weight from progression: ${prog[weightKey]}`)
+          console.log(`Max from settings: ${settings[`${exercise.type}Max` as keyof UserSettings]}`)
           
           // Ensure stage is within valid range (1-3)
           const stageValue = Math.max(1, Math.min(3, prog[stageKey] || 1)) as 1 | 2 | 3
@@ -77,8 +79,11 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
             ? settings[`${exercise.type}Max` as keyof UserSettings] as number
             : Math.round((settings[`${exercise.type}Max` as keyof UserSettings] as number) * 0.65))
           
-          // Ensure weight is reasonable (not 0 or extremely high)
-          weight = Math.max(45, Math.min(weight, 2000))
+          // Ensure weight is reasonable (not extremely high)
+          // Don't enforce minimum if weight is explicitly 0
+          if (weight > 0) {
+            weight = Math.min(weight, 2000)
+          }
           
           console.log(`Final weight: ${weight}, Sets: ${stage.sets}, Reps: ${stage.reps}`)
           
