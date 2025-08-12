@@ -45,6 +45,9 @@ export function CompleteWorkoutButton({
         throw new Error('Failed to save workout')
       }
 
+      // Ensure the response is fully processed
+      await response.json()
+
       setShowModal(true)
     } catch (error) {
       console.error('Error completing workout:', error)
@@ -54,10 +57,17 @@ export function CompleteWorkoutButton({
 
   const handleModalClose = () => {
     setShowModal(false)
-    // Force a hard refresh to ensure new workout loads
-    router.refresh()
-    // Also push to the same route to ensure refresh
-    router.push('/')
+    // Small delay to ensure modal closes smoothly
+    setTimeout(() => {
+      // Force a hard refresh to ensure new workout loads
+      router.refresh()
+      // Navigate to home to trigger full page reload
+      router.push('/')
+      // Fallback: reload the page if refresh doesn't work
+      setTimeout(() => {
+        window.location.href = '/'
+      }, 100)
+    }, 100)
   }
 
   return (
