@@ -7,6 +7,7 @@ export async function POST() {
   try {
     const user = await getOrCreateUser()
     console.log('User found:', user.id)
+    console.log('Current settings before reset:', user.settings)
 
     // Delete all workouts
     console.log('Deleting workouts...')
@@ -63,6 +64,12 @@ export async function POST() {
       console.log('Updated progressions:', updatedProgressions.count)
     }
 
+    // Final verification
+    const verifyUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      include: { settings: true }
+    })
+    console.log('Final settings after reset:', verifyUser?.settings)
     console.log('Reset complete')
     return NextResponse.json({ success: true })
   } catch (error) {

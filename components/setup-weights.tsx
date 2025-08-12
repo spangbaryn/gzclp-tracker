@@ -40,6 +40,8 @@ export function SetupWeights({ unit }: SetupWeightsProps) {
       
       if (response.ok) {
         console.log('Weights saved successfully, redirecting...')
+        // Small delay to ensure database is updated
+        await new Promise(resolve => setTimeout(resolve, 100))
         // Redirect to home to show the workout with calculated weights
         window.location.href = '/'
       } else {
