@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { ExerciseData } from './workout-view'
 import { NumberPadModal } from './number-pad-modal'
 import { ProgressionPreview } from './progression-preview'
@@ -29,6 +29,16 @@ export function ExerciseCard({
   const [amrapSetIndex, setAmrapSetIndex] = useState<number | null>(null)
   const tierClass = `tier-${exercise.tier}`
   const tierName = exercise.tier === 1 ? 'T1' : exercise.tier === 2 ? 'T2' : 'T3'
+  
+  useEffect(() => {
+    console.log('ExerciseCard mounted/updated:', {
+      name: exercise.name,
+      tier: exercise.tier,
+      stage: exercise.stage,
+      setsCount: exercise.sets.length,
+      lastSetIsAmrap: exercise.sets[exercise.sets.length - 1]?.isAmrap
+    })
+  }, [exercise])
   
   const handleSetClick = (setIndex: number) => {
     const set = exercise.sets[setIndex]
@@ -89,9 +99,9 @@ export function ExerciseCard({
             onClick={() => handleSetClick(setIndex)}
             className={`
               px-[10px] py-[14px] rounded-lg text-center cursor-pointer transition-all min-h-[60px]
-              focus:outline-2 focus:outline-ring focus:-outline-offset-2
+              focus:outline-none focus:ring-2 focus:ring-white/20
               ${set.completed 
-                ? 'bg-foreground text-background font-bold shadow-lg shadow-white/10' 
+                ? 'bg-white text-black font-bold shadow-lg shadow-white/10' 
                 : set.isAmrap 
                   ? 'border-2 border-white/20 bg-gradient-to-br from-white/10 to-white/5 hover:border-white/30 hover:from-white/15 hover:to-white/10' 
                   : 'border-2 border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10'
