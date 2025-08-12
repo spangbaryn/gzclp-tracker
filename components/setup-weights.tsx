@@ -49,7 +49,7 @@ export function SetupWeights({ unit }: SetupWeightsProps) {
       }
     } catch (error) {
       console.error('Error saving weights:', error)
-      alert('Failed to save starting weights: ' + error.message)
+      alert('Failed to save starting weights: ' + (error instanceof Error ? error.message : 'Unknown error'))
     }
   }
 

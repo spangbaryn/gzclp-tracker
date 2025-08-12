@@ -55,7 +55,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
         }
       } catch (error) {
         console.error('Error resetting data:', error)
-        alert('Failed to reset data: ' + error.message)
+        alert('Failed to reset data: ' + (error instanceof Error ? error.message : 'Unknown error'))
       }
     }
   }
