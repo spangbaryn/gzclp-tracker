@@ -33,13 +33,9 @@ export function ExerciseCard({
   const handleSetClick = (setIndex: number) => {
     const set = exercise.sets[setIndex]
     if (set.isAmrap && !set.completed) {
-      // Mark as completed first
-      onToggleSet(exerciseIndex, setIndex)
-      // Then show modal for reps
-      setTimeout(() => {
-        setAmrapSetIndex(setIndex)
-        setShowAmrapModal(true)
-      }, 100)
+      // For AMRAP sets, show modal first to get reps
+      setAmrapSetIndex(setIndex)
+      setShowAmrapModal(true)
     } else {
       onToggleSet(exerciseIndex, setIndex)
     }
@@ -136,7 +132,10 @@ export function ExerciseCard({
             setAmrapSetIndex(null)
           }}
           onSave={(reps) => {
+            // Update the reps
             onUpdateAmrapReps(exerciseIndex, amrapSetIndex, reps)
+            // Mark the set as completed
+            onToggleSet(exerciseIndex, amrapSetIndex)
             setShowAmrapModal(false)
             setAmrapSetIndex(null)
           }}
