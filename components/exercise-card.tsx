@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { ExerciseData } from './workout-view'
 import { NumberPadModal } from './number-pad-modal'
+import { ProgressionPreview } from './progression-preview'
 
 interface ExerciseCardProps {
   exercise: ExerciseData
@@ -116,21 +117,7 @@ export function ExerciseCard({
         ))}
       </div>
       
-      {exercise.tier <= 2 && (
-        <div className="rounded-lg bg-gradient-to-r from-white/5 to-transparent border-l-[3px] border-white/30 pl-4 py-3 mt-6 text-xs uppercase tracking-[1px] text-muted font-semibold">
-          Next: +{exercise.type === 'bench' || exercise.type === 'ohp' ? '5' : '10'} {unit}
-        </div>
-      )}
-      
-      {exercise.tier === 3 && (() => {
-        const lastSet = exercise.sets[exercise.sets.length - 1]
-        const shouldIncrease = lastSet.completed && lastSet.reps >= 25
-        return shouldIncrease ? (
-          <div className="rounded-lg bg-gradient-to-r from-green-500/10 to-transparent border-l-[3px] border-green-500/50 pl-4 py-3 mt-6 text-xs uppercase tracking-[1px] text-green-400 font-semibold">
-            Great job! Consider +5-10 {unit} next time
-          </div>
-        ) : null
-      })()}
+      <ProgressionPreview exercise={exercise} unit={unit} />
       
       <NumberPadModal
         isOpen={showWeightModal}
