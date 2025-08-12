@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String          @id @default(cuid())
+  email           String?         @unique
+  createdAt       DateTime        @default(now())
+  settings        UserSettings?
+  workouts        Workout[]
+  progressions    Progression[]
+}
+
+model UserSettings {
+  id              String          @id @default(cuid())
+  userId          String          @unique
+  unit            String          @default("lbs") // "lbs" or "kg"
+  currentWorkout  Int             @default(0) // 0=A1, 1=B1, 2=A2, 3=B2
+  squatMax        Float           @default(0)
+  benchMax        Float           @default(0)
+  deadliftMax     Float           @default(0)
+  ohpMax          Float           @default(0)
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Progression {
+  id              String          @id @default(cuid())
+  userId          String
+  liftType        String          // "squat", "bench", "deadlift", "ohp"
+  t1Stage         Int             @default(1)
+  t2Stage         Int             @default(1)
+  t1Weight        Float           @default(0)
+  t2Weight        Float           @default(0)
+  updatedAt       DateTime        @updatedAt
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, liftType])
+}
+
+model Workout {
+  id              String          @id @default(cuid())
+  userId          String
+  workoutType     String          // "A1", "B1", "A2", "B2"
+  completedAt     DateTime        @default(now())
+  exercises       Exercise[]
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Exercise {
+  id              String          @id @default(cuid())
+  workoutId       String
+  name            String
+  tier            Int             // 1, 2, or 3
+  type            String          // "squat", "bench", "deadlift", "ohp", "accessory"
+  weight          Float
+  stage           String?         // e.g., "5×3+", "3×10"
+  sets            Set[]
+  workout         Workout         @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+}
+
+model Set {
+  id              String          @id @default(cuid())
+  exerciseId      String
+  setNumber       Int
+  targetReps      Int
+  completedReps   Int
+  completed       Boolean         @default(false)
+  isAmrap         Boolean         @default(false)
+  exercise        Exercise        @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+}
