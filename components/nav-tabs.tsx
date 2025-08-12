@@ -1,6 +1,7 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 
 const tabs = [
   { id: 'workout', label: 'Workout', href: '/' },
@@ -11,30 +12,30 @@ const tabs = [
 
 export function NavTabs() {
   const pathname = usePathname()
-  const router = useRouter()
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[100] glass-heavy border-t border-white/10 pb-safe">
       <div className="flex">
         {tabs.map((tab) => (
-          <button
+          <Link
             key={tab.id}
-            onClick={() => router.push(tab.href)}
+            href={tab.href}
+            prefetch={true}
             className={`
               flex-1 py-4 text-center border-none bg-transparent
-              text-xs font-bold cursor-pointer transition-all
-              uppercase tracking-[1px] relative
+              text-xs font-bold cursor-pointer transition-colors
+              uppercase tracking-[1px] relative no-underline
               focus:outline-2 focus:outline-ring focus:-outline-offset-2
               active:bg-white/10
-              ${pathname === tab.href ? 'text-foreground' : 'text-muted'}
+              ${pathname === tab.href ? 'text-foreground' : 'text-muted hover:text-foreground/70'}
               before:content-[''] before:absolute before:top-0
               before:left-0 before:right-0 before:h-[2px] before:bg-foreground
-              before:transition-transform
+              before:transition-transform before:duration-200
               ${pathname === tab.href ? 'before:scale-x-100' : 'before:scale-x-0'}
             `}
           >
             {tab.label}
-          </button>
+          </Link>
         ))}
       </div>
     </div>
