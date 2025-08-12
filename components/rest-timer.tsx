@@ -36,7 +36,7 @@ export function RestTimer({ startTime }: RestTimerProps) {
   const getTimerColor = () => {
     if (elapsed >= 180) return 'text-red-500' // 3 minutes or more
     if (elapsed >= 90) return 'text-green-500' // 1 minute 30 seconds or more
-    return 'text-primary' // Less than 1 minute 30 seconds (blue)
+    return 'text-blue-500' // Less than 1 minute 30 seconds (blue)
   }
 
   const timerColor = getTimerColor()

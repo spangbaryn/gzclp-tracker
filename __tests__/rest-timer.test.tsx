@@ -68,7 +68,7 @@ describe('RestTimer Component', () => {
     
     // Initially blue (< 90 seconds)
     let timerDisplay = screen.getByText(/0:00/)
-    expect(timerDisplay).toHaveClass('text-primary')
+    expect(timerDisplay).toHaveClass('text-blue-500')
     
     // Advance to 1:30 - should be green
     act(() => {
