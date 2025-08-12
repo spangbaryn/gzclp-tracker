@@ -29,7 +29,7 @@ export function ResetButton() {
     <div className="mt-8 p-4 glass border-2 border-red-500/50 rounded-lg">
       <h2 className="text-lg font-bold mb-4 text-red-500 uppercase tracking-wider">Debug Tools</h2>
       <p className="text-sm text-muted mb-4">
-        If you're seeing incorrect data (like 7999 lbs or wrong sets), use this to reset:
+        If you&apos;re seeing incorrect data (like 7999 lbs or wrong sets), use this to reset:
       </p>
       <button
         onClick={handleReset}
