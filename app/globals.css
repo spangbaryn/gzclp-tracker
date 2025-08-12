@@ -157,3 +157,27 @@
     pointer-events: none;
   }
 }
+
+/* Lock to portrait orientation on mobile */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  
+  body::before {
+    content: 'Please rotate your device to portrait mode';
+    display: block;
+    text-align: center;
+    font-size: 18px;
+    color: var(--foreground);
+    padding: 20px;
+  }
+  
+  .app-container,
+  #__next {
+    display: none !important;
+  }
+}

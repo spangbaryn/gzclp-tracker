@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ServiceWorkerRegistration } from '@/components/service-worker-registration';
+import { OrientationLock } from '@/components/orientation-lock';
 
 export const metadata: Metadata = {
   title: "GZCLP",
@@ -28,9 +29,11 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="theme-color" content="#0a0a0a" />
+        <meta name="screen-orientation" content="portrait" />
       </head>
       <body suppressHydrationWarning>
         <ServiceWorkerRegistration />
+        <OrientationLock />
         {children}
       </body>
     </html>
