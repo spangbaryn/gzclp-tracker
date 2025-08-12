@@ -109,7 +109,7 @@ export function NumberPadModal({
       {/* Modal */}
       <div className="fixed top-0 left-0 right-0 bottom-0 z-[9999] bg-background flex flex-col w-screen h-screen overflow-hidden overscroll-none touch-none" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh', WebkitBackfaceVisibility: 'hidden', transform: 'translateZ(0)' }}>
         {/* Header with just title */}
-        <div className="glass-heavy border-b border-white/10 px-4 py-6 pt-safe flex items-center justify-center flex-shrink-0">
+        <div className="glass-heavy border-b border-white/10 px-4 pb-6 flex items-center justify-center flex-shrink-0" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 1.5rem)' }}>
           <h2 className="text-sm font-bold uppercase tracking-[2px] text-foreground">
             {title}
           </h2>
@@ -152,7 +152,7 @@ export function NumberPadModal({
       </div>
 
       {/* Number pad */}
-      <div className="glass-heavy border-t border-white/10 p-3 pb-8 flex-shrink-0" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
+      <div className="glass-heavy border-t border-white/10 p-3 flex-shrink-0" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 1.5rem)' }}>
         <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto">
           {buttons.map((button) => (
             <button
