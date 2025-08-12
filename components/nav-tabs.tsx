@@ -51,15 +51,15 @@ export function NavTabs() {
   const pathname = usePathname()
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[100] glass-heavy border-t border-white/10 pb-safe">
-      <div className="flex">
+    <div className="fixed bottom-0 left-0 right-0 z-[100] glass-heavy border-t border-white/10" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      <div className="flex" style={{ height: '64px' }}>
         {tabs.map((tab) => (
           <Link
             key={tab.id}
             href={tab.href}
             prefetch={true}
             className={`
-              flex-1 py-3 text-center border-none bg-transparent
+              flex-1 text-center border-none bg-transparent
               text-xs font-bold cursor-pointer transition-colors
               uppercase tracking-[1px] relative no-underline
               focus:outline-2 focus:outline-ring focus:-outline-offset-2
