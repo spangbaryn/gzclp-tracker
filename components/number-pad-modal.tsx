@@ -152,7 +152,7 @@ export function NumberPadModal({
       </div>
 
       {/* Number pad */}
-      <div className="glass-heavy border-t border-white/10 p-3 pb-safe flex-shrink-0">
+      <div className="glass-heavy border-t border-white/10 p-3 pb-8 flex-shrink-0" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
         <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto">
           {buttons.map((button) => (
             <button
