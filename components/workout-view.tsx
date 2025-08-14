@@ -34,7 +34,7 @@ const WORKOUT_STATE_KEY = 'gzclp-current-workout-state'
 
 export function WorkoutView({ workout, workoutKey, settings, progressions }: WorkoutViewProps) {
   const [lastT3Weights, setLastT3Weights] = useState<Record<string, { weight: number, shouldIncrease: boolean }>>({})
-  const { startTime, startTimer } = useRestTimer()
+  const { startTime, startTimer, stopTimer } = useRestTimer()
   const [timerExerciseIndex, setTimerExerciseIndex] = useState<number | null>(null)
   
   // Fetch last workout data to check T3 progression
@@ -277,7 +277,13 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
       {exercisesData.map((exercise, index) => (
         <div key={index}>
           {timerExerciseIndex === index && (
-            <RestTimer startTime={startTime} />
+            <RestTimer 
+              startTime={startTime} 
+              onDismiss={() => {
+                stopTimer()
+                setTimerExerciseIndex(null)
+              }}
+            />
           )}
           <ExerciseCard
             exercise={exercise}

@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react'
 
 interface RestTimerProps {
   startTime: number | null
+  onDismiss?: () => void
 }
 
-export function RestTimer({ startTime }: RestTimerProps) {
+export function RestTimer({ startTime, onDismiss }: RestTimerProps) {
   const [elapsed, setElapsed] = useState(0)
 
   useEffect(() => {
@@ -43,7 +44,10 @@ export function RestTimer({ startTime }: RestTimerProps) {
 
   return (
     <div className="rest-timer mb-4 text-center">
-      <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-black/40 backdrop-blur-sm border-2 border-white/20 shadow-lg">
+      <div 
+        onClick={onDismiss}
+        className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-black/40 backdrop-blur-sm border-2 border-white/20 shadow-lg cursor-pointer active:scale-95 transition-transform"
+      >
         <span className="text-sm font-semibold uppercase tracking-wider text-white/80">Rest</span>
         <span className={`text-3xl font-mono font-bold ${timerColor} tabular-nums`}>{formattedTime}</span>
       </div>
