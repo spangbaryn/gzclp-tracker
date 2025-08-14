@@ -19,21 +19,27 @@ export default async function ProgressPage() {
           {user.progressions.map((prog) => {
             const liftName = prog.liftType === 'ohp' ? 'OHP' : 
               prog.liftType.charAt(0).toUpperCase() + prog.liftType.slice(1)
-            const weight = prog.t1Weight || user.settings![`${prog.liftType}Max` as keyof typeof user.settings] as number
+            const t1Weight = prog.t1Weight || user.settings![`${prog.liftType}Max` as keyof typeof user.settings] as number
+            const t2Weight = prog.t2Weight || user.settings![`${prog.liftType}Max` as keyof typeof user.settings] as number
             
             return (
               <div key={prog.id} className="rounded-lg bg-white/[0.02] border border-white/5 p-4">
-                <div className="flex justify-between items-center mb-2">
+                <div className="grid grid-cols-[1fr,120px,120px] items-center gap-4">
                   <span className="text-foreground font-semibold text-base">
                     {liftName}
                   </span>
-                  <span className="text-foreground text-xl font-bold">
-                    {weight} {user.settings!.unit}
-                  </span>
-                </div>
-                <div className="flex gap-4 text-xs text-muted">
-                  <span className="px-2 py-1 rounded bg-white/5">T1: Stage {prog.t1Stage}</span>
-                  <span className="px-2 py-1 rounded bg-white/5">T2: Stage {prog.t2Stage}</span>
+                  <div className="text-right">
+                    <span className="text-xs text-muted uppercase tracking-wider">T1: </span>
+                    <span className="text-foreground text-lg font-bold">
+                      {t1Weight} {user.settings!.unit}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs text-muted uppercase tracking-wider">T2: </span>
+                    <span className="text-foreground text-lg font-bold">
+                      {t2Weight} {user.settings!.unit}
+                    </span>
+                  </div>
                 </div>
               </div>
             )
