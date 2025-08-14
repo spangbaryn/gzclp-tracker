@@ -60,6 +60,7 @@ export default async function WorkoutPage() {
         initialWorkoutKey={currentWorkoutKey}
         settings={settings}
         progressions={user.progressions}
+        user={user}
       />
     </AppContainer>
   )

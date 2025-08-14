@@ -5,7 +5,7 @@ import { ExerciseCard } from './exercise-card'
 import { CompleteWorkoutButton } from './complete-workout-button'
 import { RestTimer } from './rest-timer'
 import { useRestTimer } from '@/hooks/use-rest-timer'
-import type { Progression, UserSettings } from '@prisma/client'
+import type { Progression, UserSettings, User, Exercise, Set } from '@prisma/client'
 import type { WorkoutType } from '@/lib/constants'
 import { workouts, stageConfig } from '@/lib/constants'
 
@@ -14,6 +14,7 @@ interface WorkoutViewProps {
   workoutKey: WorkoutType
   settings: UserSettings
   progressions: Progression[]
+  user: User & { settings: UserSettings | null }
 }
 
 export interface ExerciseData {
@@ -32,10 +33,11 @@ export interface ExerciseData {
 
 const WORKOUT_STATE_KEY = 'gzclp-current-workout-state'
 
-export function WorkoutView({ workout, workoutKey, settings, progressions }: WorkoutViewProps) {
+export function WorkoutView({ workout, workoutKey, settings, progressions, user }: WorkoutViewProps) {
   const [lastT3Weights, setLastT3Weights] = useState<Record<string, { weight: number, shouldIncrease: boolean }>>({})
   const { startTime, startTimer, stopTimer } = useRestTimer()
   const [timerExerciseIndex, setTimerExerciseIndex] = useState<number | null>(null)
+  const [lastExercises, setLastExercises] = useState<Record<string, { exercise: Exercise & { sets: Set[] }, workoutDate: Date }>>({})
   
   // Fetch last workout data to check T3 progression
   useEffect(() => {
@@ -52,6 +54,37 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
     }
     fetchLastWorkout()
   }, [])
+
+  // Fetch last exercise data for each exercise
+  useEffect(() => {
+    const fetchLastExercises = async () => {
+      try {
+        const response = await fetch('/api/workouts/last-exercises', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: user.id,
+            exercises: workout.exercises.map(ex => ({
+              name: ex.name,
+              tier: ex.tier,
+              type: ex.type
+            }))
+          })
+        })
+        
+        if (response.ok) {
+          const data = await response.json()
+          setLastExercises(data)
+        }
+      } catch (error) {
+        console.error('Error fetching last exercises:', error)
+      }
+    }
+    
+    if (user.id && workout.exercises.length > 0) {
+      fetchLastExercises()
+    }
+  }, [user.id, workout])
 
   const [exercisesData, setExercisesData] = useState<ExerciseData[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
@@ -293,6 +326,9 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
             onToggleSet={toggleSet}
             onUpdateAmrapReps={updateAmrapReps}
             onSetWeight={setWeight}
+            lastExercise={lastExercises[`${exercise.name}-${exercise.tier}`]?.exercise}
+            lastWorkoutDate={lastExercises[`${exercise.name}-${exercise.tier}`]?.workoutDate}
+            user={user}
           />
         </div>
       ))}

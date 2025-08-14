@@ -4,6 +4,8 @@ import { useState } from 'react'
 import type { ExerciseData } from './workout-view'
 import { NumberPadModal } from './number-pad-modal'
 import { ProgressionPreview } from './progression-preview'
+import { ExerciseDetailModal } from './exercise-detail-modal'
+import type { Exercise, Set, User, UserSettings } from '@prisma/client'
 
 interface ExerciseCardProps {
   exercise: ExerciseData
@@ -13,6 +15,9 @@ interface ExerciseCardProps {
   onToggleSet: (exerciseIndex: number, setIndex: number) => void
   onUpdateAmrapReps: (exerciseIndex: number, setIndex: number, value: number) => void
   onSetWeight: (exerciseIndex: number, weight: number) => void
+  lastExercise?: (Exercise & { sets: Set[] }) | null
+  lastWorkoutDate?: Date | null
+  user?: User & { settings: UserSettings | null }
 }
 
 export function ExerciseCard({
@@ -22,11 +27,15 @@ export function ExerciseCard({
   onAdjustWeight,
   onToggleSet,
   onUpdateAmrapReps,
-  onSetWeight
+  onSetWeight,
+  lastExercise,
+  lastWorkoutDate,
+  user
 }: ExerciseCardProps) {
   const [showWeightModal, setShowWeightModal] = useState(false)
   const [showAmrapModal, setShowAmrapModal] = useState(false)
   const [amrapSetIndex, setAmrapSetIndex] = useState<number | null>(null)
+  const [showLastTimeModal, setShowLastTimeModal] = useState(false)
   const tierClass = `tier-${exercise.tier}`
   const tierName = exercise.tier === 1 ? 'T1' : exercise.tier === 2 ? 'T2' : 'T3'
   
@@ -54,8 +63,18 @@ export function ExerciseCard({
         )}
       </div>
       
-      <div className="text-xl font-bold text-foreground mb-6 tracking-[0.5px]">
-        {exercise.name}
+      <div className="flex items-center justify-between mb-6">
+        <div className="text-xl font-bold text-foreground tracking-[0.5px]">
+          {exercise.name}
+        </div>
+        {lastExercise && (
+          <button
+            onClick={() => setShowLastTimeModal(true)}
+            className="text-sm text-muted cursor-pointer active:text-foreground transition-colors"
+          >
+            last time
+          </button>
+        )}
       </div>
       
       <div className="flex items-center justify-between p-4 rounded-lg bg-white/[0.02] border border-white/5 mb-6">
@@ -142,6 +161,16 @@ export function ExerciseCard({
           initialValue={exercise.sets[amrapSetIndex].reps}
           title="AMRAP Reps"
           unit="reps"
+        />
+      )}
+      
+      {lastExercise && lastWorkoutDate && user && (
+        <ExerciseDetailModal
+          isOpen={showLastTimeModal}
+          onClose={() => setShowLastTimeModal(false)}
+          exercise={lastExercise}
+          workoutDate={lastWorkoutDate}
+          user={user}
         />
       )}
     </div>

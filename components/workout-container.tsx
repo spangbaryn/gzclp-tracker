@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { WorkoutView } from './workout-view'
-import type { UserSettings, Progression } from '@prisma/client'
+import type { UserSettings, Progression, User } from '@prisma/client'
 import type { WorkoutType } from '@/lib/constants'
 import { workouts } from '@/lib/constants'
 
@@ -11,12 +11,14 @@ interface WorkoutContainerProps {
   initialWorkoutKey: WorkoutType
   settings: UserSettings
   progressions: Progression[]
+  user: User & { settings: UserSettings | null }
 }
 
 export function WorkoutContainer({ 
   initialWorkoutKey, 
   settings, 
-  progressions 
+  progressions,
+  user
 }: WorkoutContainerProps) {
   const [currentWorkoutKey, setCurrentWorkoutKey] = useState(initialWorkoutKey)
   const router = useRouter()
@@ -61,6 +63,7 @@ export function WorkoutContainer({
       workoutKey={currentWorkoutKey}
       settings={settings}
       progressions={progressions}
+      user={user}
     />
   )
 }
