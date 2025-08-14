@@ -23,6 +23,7 @@ export interface ExerciseData {
   weight: number
   sets: {
     reps: number
+    currentReps?: number  // Track current reps separately for cycling
     completed: boolean
     isAmrap: boolean
   }[]
@@ -136,20 +137,57 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
   }
 
   const toggleSet = (exerciseIndex: number, setIndex: number) => {
-    
     setExercisesData(prev => {
-      const newData = [...prev]
-      const exercise = newData[exerciseIndex]
-      const set = exercise.sets[setIndex]
-      const wasCompleted = set.completed
-      set.completed = !set.completed
-      
+      // Create a deep copy to ensure we're not mutating
+      const newData = prev.map((exercise, eIdx) => {
+        if (eIdx !== exerciseIndex) return exercise
+        
+        return {
+          ...exercise,
+          sets: exercise.sets.map((set, sIdx) => {
+            if (sIdx !== setIndex) return set
+            
+            // Handle the specific set being toggled
+            if (!set.isAmrap) {
+              if (!set.completed) {
+                // First tap: just mark as completed
+                return { ...set, completed: true }
+              } else {
+                // Already completed, cycle the reps
+                const currentReps = set.currentReps !== undefined ? set.currentReps : set.reps
+                
+                if (currentReps > 1) {
+                  // Decrement reps
+                  return { 
+                    ...set, 
+                    currentReps: currentReps - 1
+                  }
+                } else {
+                  // At 1 rep, revert to uncompleted state
+                  return { 
+                    ...set, 
+                    completed: false,
+                    currentReps: undefined
+                  }
+                }
+              }
+            } else {
+              // AMRAP sets just toggle
+              return { ...set, completed: !set.completed }
+            }
+          })
+        }
+      })
       
       // Handle timer logic
+      const exercise = newData[exerciseIndex]
+      const set = exercise.sets[setIndex]
+      const wasCompleted = prev[exerciseIndex].sets[setIndex].completed
+      
       if (!wasCompleted && set.completed) {
         // Set was just completed
         const isLastSet = setIndex === exercise.sets.length - 1
-        const isLastExercise = exerciseIndex === newData.length - 1 // Fixed: use newData.length
+        const isLastExercise = exerciseIndex === newData.length - 1
         
         if (isLastExercise && isLastSet) {
           // Last set of last exercise - no timer needed

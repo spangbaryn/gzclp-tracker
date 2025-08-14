@@ -106,7 +106,7 @@ export function ExerciseCard({
                 ? `× ${set.reps}` 
                 : set.isAmrap 
                   ? 'AMRAP' 
-                  : `× ${set.reps}`
+                  : `× ${set.currentReps ?? set.reps}`
               }
             </div>
           </button>
