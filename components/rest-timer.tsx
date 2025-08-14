@@ -42,10 +42,10 @@ export function RestTimer({ startTime }: RestTimerProps) {
   const timerColor = getTimerColor()
 
   return (
-    <div className="rest-timer mb-3 text-center">
-      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
-        <span className="text-xs uppercase tracking-wider text-muted">Rest Timer</span>
-        <span className={`text-sm font-mono font-bold ${timerColor}`}>{formattedTime}</span>
+    <div className="rest-timer mb-4 text-center">
+      <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-black/40 backdrop-blur-sm border-2 border-white/20 shadow-lg">
+        <span className="text-sm font-semibold uppercase tracking-wider text-white/80">Rest</span>
+        <span className={`text-3xl font-mono font-bold ${timerColor} tabular-nums`}>{formattedTime}</span>
       </div>
     </div>
   )
