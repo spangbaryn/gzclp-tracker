@@ -88,10 +88,8 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
           if (parsed.timerState) {
             const { startTime: savedStartTime, timerExerciseIndex: savedTimerIndex } = parsed.timerState
             if (savedStartTime && savedTimerIndex !== null) {
-              // Adjust the start time to account for time passed while away
-              const timePassed = Date.now() - parsed.timestamp
-              const adjustedStartTime = savedStartTime + timePassed
-              startTimer(adjustedStartTime)
+              // Restore the original start time - the hook will calculate elapsed time
+              startTimer(savedStartTime)
               setTimerExerciseIndex(savedTimerIndex)
             }
           }

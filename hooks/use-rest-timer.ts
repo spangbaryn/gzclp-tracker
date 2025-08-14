@@ -11,8 +11,15 @@ export function useRestTimer() {
 
   // Start the timer
   const startTimer = useCallback((customStartTime?: number) => {
-    setStartTime(customStartTime || Date.now())
-    setElapsedSeconds(0)
+    const newStartTime = customStartTime || Date.now()
+    setStartTime(newStartTime)
+    // If custom start time is provided, calculate elapsed seconds
+    if (customStartTime) {
+      const elapsed = Math.floor((Date.now() - customStartTime) / 1000)
+      setElapsedSeconds(elapsed)
+    } else {
+      setElapsedSeconds(0)
+    }
   }, [])
 
   // Stop the timer
