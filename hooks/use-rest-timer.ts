@@ -10,8 +10,8 @@ export function useRestTimer() {
   const isRunning = startTime !== null
 
   // Start the timer
-  const startTimer = useCallback(() => {
-    setStartTime(Date.now())
+  const startTimer = useCallback((customStartTime?: number) => {
+    setStartTime(customStartTime || Date.now())
     setElapsedSeconds(0)
   }, [])
 

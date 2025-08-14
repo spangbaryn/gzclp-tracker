@@ -56,17 +56,21 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
   const [exercisesData, setExercisesData] = useState<ExerciseData[]>([])
   const [isInitialized, setIsInitialized] = useState(false)
 
-  // Save to localStorage whenever exercisesData changes
+  // Save to localStorage whenever exercisesData or timer changes
   useEffect(() => {
     if (isInitialized && exercisesData.length > 0) {
       const stateToSave = {
         workoutKey,
         exercisesData,
+        timerState: {
+          startTime,
+          timerExerciseIndex
+        },
         timestamp: Date.now()
       }
       localStorage.setItem(WORKOUT_STATE_KEY, JSON.stringify(stateToSave))
     }
-  }, [exercisesData, workoutKey, isInitialized])
+  }, [exercisesData, workoutKey, isInitialized, startTime, timerExerciseIndex])
 
   // Initialize exercise data with T3 weights
   useEffect(() => {
@@ -79,6 +83,19 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
         if (parsed.workoutKey === workoutKey && 
             Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
           setExercisesData(parsed.exercisesData)
+          
+          // Restore timer state if present
+          if (parsed.timerState) {
+            const { startTime: savedStartTime, timerExerciseIndex: savedTimerIndex } = parsed.timerState
+            if (savedStartTime && savedTimerIndex !== null) {
+              // Adjust the start time to account for time passed while away
+              const timePassed = Date.now() - parsed.timestamp
+              const adjustedStartTime = savedStartTime + timePassed
+              startTimer(adjustedStartTime)
+              setTimerExerciseIndex(savedTimerIndex)
+            }
+          }
+          
           setIsInitialized(true)
           return
         }
