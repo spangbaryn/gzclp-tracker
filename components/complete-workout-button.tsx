@@ -8,11 +8,13 @@ import type { WorkoutType } from '@/lib/constants'
 interface CompleteWorkoutButtonProps {
   workoutKey: WorkoutType
   exercisesData: ExerciseData[]
+  onComplete?: () => void
 }
 
 export function CompleteWorkoutButton({ 
   workoutKey, 
-  exercisesData
+  exercisesData,
+  onComplete
 }: CompleteWorkoutButtonProps) {
   const [showModal, setShowModal] = useState(false)
   const [completedSets, setCompletedSets] = useState(0)
@@ -50,6 +52,11 @@ export function CompleteWorkoutButton({
       // Ensure the response is fully processed
       const result = await response.json()
       console.log('Workout completion result:', result)
+
+      // Call the onComplete callback if provided
+      if (onComplete) {
+        onComplete()
+      }
 
       setShowModal(true)
     } catch (error) {

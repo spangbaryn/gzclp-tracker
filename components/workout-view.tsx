@@ -30,6 +30,8 @@ export interface ExerciseData {
   stage: string
 }
 
+const WORKOUT_STATE_KEY = 'gzclp-current-workout-state'
+
 export function WorkoutView({ workout, workoutKey, settings, progressions }: WorkoutViewProps) {
   const [lastT3Weights, setLastT3Weights] = useState<Record<string, { weight: number, shouldIncrease: boolean }>>({})
   const { startTime, startTimer } = useRestTimer()
@@ -52,9 +54,40 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
   }, [])
 
   const [exercisesData, setExercisesData] = useState<ExerciseData[]>([])
+  const [isInitialized, setIsInitialized] = useState(false)
+
+  // Save to localStorage whenever exercisesData changes
+  useEffect(() => {
+    if (isInitialized && exercisesData.length > 0) {
+      const stateToSave = {
+        workoutKey,
+        exercisesData,
+        timestamp: Date.now()
+      }
+      localStorage.setItem(WORKOUT_STATE_KEY, JSON.stringify(stateToSave))
+    }
+  }, [exercisesData, workoutKey, isInitialized])
 
   // Initialize exercise data with T3 weights
   useEffect(() => {
+    // Check localStorage first
+    const savedState = localStorage.getItem(WORKOUT_STATE_KEY)
+    if (savedState) {
+      try {
+        const parsed = JSON.parse(savedState)
+        // Only restore if it's the same workout and less than 24 hours old
+        if (parsed.workoutKey === workoutKey && 
+            Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
+          setExercisesData(parsed.exercisesData)
+          setIsInitialized(true)
+          return
+        }
+      } catch (error) {
+        console.error('Error parsing saved workout state:', error)
+      }
+    }
+
+    // If no valid saved state, initialize normally
     const data = workout.exercises.map((exercise) => {
       let weight = 0
       let sets = 3
@@ -118,6 +151,7 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
       return exerciseData
     })
     setExercisesData(data)
+    setIsInitialized(true)
   }, [workout, settings, progressions, lastT3Weights])
 
   const adjustWeight = (exerciseIndex: number, amount: number) => {
@@ -244,6 +278,10 @@ export function WorkoutView({ workout, workoutKey, settings, progressions }: Wor
       <CompleteWorkoutButton 
         workoutKey={workoutKey}
         exercisesData={exercisesData}
+        onComplete={() => {
+          // Clear saved state when workout is completed
+          localStorage.removeItem(WORKOUT_STATE_KEY)
+        }}
       />
     </>
   )
