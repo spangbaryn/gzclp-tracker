@@ -47,12 +47,10 @@ export function ExerciseDetailModal({ isOpen, onClose, exercise, workoutDate, us
   const totalSets = exercise.sets.length
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-      
-      <div className="relative w-full max-w-lg bg-[#0a0a0a] rounded-2xl border-2 border-white/20 shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-[200] bg-[#0a0a0a]">
+      <div className="absolute inset-0 flex flex-col h-full">
         {/* Header */}
-        <div className="bg-[#0a0a0a] border-b border-white/10 p-6 pb-4">
+        <div className="border-b border-white/10 p-6 pb-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
               <span className={`inline-block text-xs font-bold tracking-[1.5px] uppercase tier-${exercise.tier} px-3 py-1 rounded-full bg-white/5 border border-white/10`}>
@@ -64,7 +62,7 @@ export function ExerciseDetailModal({ isOpen, onClose, exercise, workoutDate, us
             </div>
             <button
               onClick={onClose}
-              className="w-10 h-10 rounded-lg border-2 border-white/10 bg-white/5 text-muted flex items-center justify-center cursor-pointer transition-all active:scale-90"
+              className="w-12 h-12 rounded-lg border-2 border-white/10 bg-white/5 text-muted text-2xl flex items-center justify-center cursor-pointer transition-all active:scale-90"
             >
               ×
             </button>
@@ -74,11 +72,11 @@ export function ExerciseDetailModal({ isOpen, onClose, exercise, workoutDate, us
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-6 space-y-4">
+        {/* Content - Scrollable */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {/* Weight and Summary */}
           <div className="flex items-center justify-between p-4 rounded-lg bg-white/[0.02] border border-white/5">
-            <span className="text-2xl font-bold text-foreground">
+            <span className="text-3xl font-bold text-foreground">
               {exercise.weight} {user.settings?.unit || 'lbs'}
             </span>
             <span className="text-sm text-muted">
@@ -87,22 +85,22 @@ export function ExerciseDetailModal({ isOpen, onClose, exercise, workoutDate, us
           </div>
 
           {/* Sets Grid */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-3">
             {exercise.sets.map((set) => (
               <div
                 key={set.id}
                 className={`
-                  px-3 py-4 rounded-lg text-center
+                  px-4 py-5 rounded-lg text-center
                   ${set.completed 
                     ? 'bg-white text-black font-bold shadow-lg shadow-white/10' 
                     : 'border-2 border-white/10 bg-white/5 text-muted'
                   }
                 `}
               >
-                <div className="text-[11px] uppercase tracking-[1px] mb-1 opacity-80">
+                <div className="text-xs uppercase tracking-[1px] mb-1 opacity-80">
                   Set {set.setNumber}
                 </div>
-                <div className="text-base font-semibold">
+                <div className="text-lg font-semibold">
                   {set.completed ? (
                     <>× {set.completedReps}</>
                   ) : (
@@ -120,8 +118,8 @@ export function ExerciseDetailModal({ isOpen, onClose, exercise, workoutDate, us
 
           {/* Exercise Stats */}
           {completedSets > 0 && (
-            <div className="bg-white/[0.02] rounded-lg p-4 space-y-2">
-              <div className="flex justify-between text-sm">
+            <div className="bg-white/[0.02] rounded-lg p-5 space-y-3">
+              <div className="flex justify-between text-base">
                 <span className="text-muted">Total Volume</span>
                 <span className="text-foreground font-medium">
                   {exercise.sets.reduce((sum, set) => 
@@ -129,7 +127,7 @@ export function ExerciseDetailModal({ isOpen, onClose, exercise, workoutDate, us
                   ).toFixed(0)} {user.settings?.unit || 'lbs'}
                 </span>
               </div>
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-base">
                 <span className="text-muted">Total Reps</span>
                 <span className="text-foreground font-medium">
                   {exercise.sets.reduce((sum, set) => 
