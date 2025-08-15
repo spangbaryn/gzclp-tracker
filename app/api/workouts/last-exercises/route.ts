@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import type { Exercise, Set } from '@prisma/client'
 
 export async function POST(request: Request) {
   try {
     const { userId, exercises } = await request.json()
     
-    const lastExercises: Record<string, any> = {}
+    const lastExercises: Record<string, {
+      exercise: Exercise & { sets: Set[] }
+      workoutDate: Date
+    }> = {}
     
     // For each exercise, find the last workout where it was performed
     for (const exercise of exercises) {

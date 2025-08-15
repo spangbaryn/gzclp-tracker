@@ -200,7 +200,7 @@ export function WorkoutView({ workout, workoutKey, settings, progressions, user 
     })
     setExercisesData(data)
     setIsInitialized(true)
-  }, [workout, settings, progressions, lastT3Weights])
+  }, [workout, settings, progressions, lastT3Weights, workoutKey, startTimer])
 
   const adjustWeight = (exerciseIndex: number, amount: number) => {
     setExercisesData(prev => {
@@ -292,7 +292,6 @@ export function WorkoutView({ workout, workoutKey, settings, progressions, user 
   const updateAmrapReps = (exerciseIndex: number, setIndex: number, value: number) => {
     setExercisesData(prev => {
       const newData = [...prev]
-      const exercise = newData[exerciseIndex]
       newData[exerciseIndex].sets[setIndex].reps = value
       return newData
     })
