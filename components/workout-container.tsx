@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { WorkoutView } from './workout-view'
 import { useWorkout } from '@/hooks/use-workout'
 import { useOfflineStatus } from '@/hooks/use-offline-status'

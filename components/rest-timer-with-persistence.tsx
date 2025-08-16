@@ -24,7 +24,7 @@ export function RestTimerWithPersistence({
   const [timerId, setTimerId] = useState<string>()
   const [remaining, setRemaining] = useState(duration)
   const [isActive, setIsActive] = useState(false)
-  const timerManagerRef = useRef<TimerManager>()
+  const timerManagerRef = useRef<TimerManager | null>(null)
 
   useEffect(() => {
     // Initialize timer manager

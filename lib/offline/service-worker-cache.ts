@@ -1,6 +1,6 @@
-interface CacheStrategy {
-  (request: Request): Promise<Response>
-}
+// interface CacheStrategy {
+//   (request: Request): Promise<Response>
+// }
 
 interface CacheOptions {
   timeout?: number
