@@ -18,7 +18,7 @@ interface UseWorkoutReturn {
   mutate: typeof mutate
   pendingUpdates: unknown[]
   syncPendingUpdates: () => Promise<void>
-  mergeWithServer: (local: unknown, server: unknown) => unknown
+  mergeWithServer: (local: WorkoutWithExercises, server: WorkoutWithExercises) => WorkoutWithExercises
 }
 
 // Initialize offline infrastructure - only on client side

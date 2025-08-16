@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { WorkoutView } from './workout-view'
 import { useWorkout } from '@/hooks/use-workout'
@@ -24,20 +24,12 @@ export function WorkoutContainer({
 }: WorkoutContainerProps) {
   const [currentWorkoutKey, setCurrentWorkoutKey] = useState(initialWorkoutKey)
   const pathname = usePathname()
-  const { workout, completeSet } = useWorkout()
+  const { completeSet } = useWorkout()
   const { isOnline, connectionQuality } = useOfflineStatus()
   
-  useEffect(() => {
-    // Only check for updates when on the workout page
-    if (pathname !== '/') return
-    
-    // Update local state if workout changes
-    if (workout?.currentWorkoutKey && workout.currentWorkoutKey !== currentWorkoutKey) {
-      console.log('Workout changed from', currentWorkoutKey, 'to', workout.currentWorkoutKey)
-      setCurrentWorkoutKey(workout.currentWorkoutKey)
-      // Removed router.refresh() to prevent page reloads
-    }
-  }, [workout?.currentWorkoutKey, currentWorkoutKey, pathname])
+  // Note: The workout polling functionality has been removed as we're using
+  // server-side props for the initial workout key. The useWorkout hook is
+  // primarily for offline set completion functionality.
   
   const currentWorkout = workouts[currentWorkoutKey]
   
