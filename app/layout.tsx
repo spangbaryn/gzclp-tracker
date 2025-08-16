@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { OrientationLock } from '@/components/orientation-lock';
+import { OfflineIndicator } from '@/components/offline-indicator';
+import { ServiceWorkerUpdater } from '@/components/service-worker-updater';
 
 export const metadata: Metadata = {
   title: "GZCLP",
@@ -32,7 +34,9 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <OrientationLock />
+        {/* <ServiceWorkerUpdater /> */}
         {children}
+        <OfflineIndicator />
       </body>
     </html>
   );

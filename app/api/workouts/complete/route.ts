@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getOrCreateUser } from '@/lib/user'
 import { stageConfig } from '@/lib/constants'
+import { revalidatePath } from 'next/cache'
 
 interface ExerciseSet {
   reps: number
@@ -159,6 +160,11 @@ export async function POST(request: NextRequest) {
       include: { settings: true }
     })
     console.log('Verified user settings after update:', verifyUser?.settings)
+
+    // Trigger revalidation for fresh data
+    revalidatePath('/history')
+    revalidatePath('/progress')
+    revalidatePath('/')
 
     return NextResponse.json({ success: true, workoutId: workout.id })
   } catch (error) {

@@ -15,6 +15,7 @@ interface WorkoutViewProps {
   settings: UserSettings
   progressions: Progression[]
   user: User & { settings: UserSettings | null }
+  onCompleteSet?: (exerciseId: string, setId: string, completedReps: number) => Promise<void>
 }
 
 export interface ExerciseData {
@@ -33,7 +34,7 @@ export interface ExerciseData {
 
 const WORKOUT_STATE_KEY = 'gzclp-current-workout-state'
 
-export function WorkoutView({ workout, workoutKey, settings, progressions, user }: WorkoutViewProps) {
+export function WorkoutView({ workout, workoutKey, settings, progressions, user, onCompleteSet }: WorkoutViewProps) {
   const [lastT3Weights, setLastT3Weights] = useState<Record<string, { weight: number, shouldIncrease: boolean }>>({})
   const { startTime, startTimer, stopTimer } = useRestTimer()
   const [timerExerciseIndex, setTimerExerciseIndex] = useState<number | null>(null)
@@ -218,7 +219,7 @@ export function WorkoutView({ workout, workoutKey, settings, progressions, user 
     })
   }
 
-  const toggleSet = (exerciseIndex: number, setIndex: number) => {
+  const toggleSet = async (exerciseIndex: number, setIndex: number) => {
     setExercisesData(prev => {
       // Create a deep copy to ensure we're not mutating
       const newData = prev.map((exercise, eIdx) => {
@@ -233,6 +234,19 @@ export function WorkoutView({ workout, workoutKey, settings, progressions, user 
             if (!set.isAmrap) {
               if (!set.completed) {
                 // First tap: just mark as completed
+                // Call onCompleteSet if provided for offline sync
+                if (onCompleteSet) {
+                  const exerciseName = exercise.name
+                  const setId = `${exerciseName}-${setIndex}`
+                  // Only call if we have the function, but don't break if it fails
+                  try {
+                    onCompleteSet(exerciseName, setId, set.reps).catch(err => {
+                      console.warn('Failed to sync set completion:', err)
+                    })
+                  } catch (err) {
+                    console.warn('Failed to call onCompleteSet:', err)
+                  }
+                }
                 return { ...set, completed: true }
               } else {
                 // Already completed, cycle the reps
