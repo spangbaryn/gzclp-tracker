@@ -56,13 +56,11 @@ export function RestTimerWithPersistence({
 
     const updateRemaining = async () => {
       if (timerManagerRef.current && timerId) {
-        const timer = await timerManagerRef.current.getActiveTimer(timerId)
-        if (timer) {
-          const elapsed = Date.now() - timer.startTime
-          const remainingMs = Math.max(0, timer.duration * 1000 - elapsed)
-          setRemaining(Math.ceil(remainingMs / 1000))
+        const timerStatus = await timerManagerRef.current.getTimerStatus(timerId)
+        if (timerStatus) {
+          setRemaining(Math.ceil(timerStatus.remaining / 1000))
           
-          if (remainingMs <= 0) {
+          if (timerStatus.remaining <= 0) {
             setIsActive(false)
             if (onComplete) onComplete()
           }
@@ -80,9 +78,10 @@ export function RestTimerWithPersistence({
   }, [isActive, timerId, onComplete])
 
   const handleDismiss = async () => {
-    if (timerManagerRef.current && timerId) {
-      await timerManagerRef.current.cancelTimer(timerId)
-    }
+    // TODO: Implement timer cancellation in TimerManager
+    // if (timerManagerRef.current && timerId) {
+    //   await timerManagerRef.current.cancelTimer(timerId)
+    // }
     setIsActive(false)
     if (onDismiss) onDismiss()
   }
