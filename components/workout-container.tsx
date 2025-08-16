@@ -23,9 +23,8 @@ export function WorkoutContainer({
   user
 }: WorkoutContainerProps) {
   const [currentWorkoutKey, setCurrentWorkoutKey] = useState(initialWorkoutKey)
-  const router = useRouter()
   const pathname = usePathname()
-  const { workout, completeSet, error, isLoading } = useWorkout()
+  const { workout, completeSet } = useWorkout()
   const { isOnline, connectionQuality } = useOfflineStatus()
   
   useEffect(() => {

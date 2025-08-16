@@ -104,9 +104,9 @@ export default function TestOfflinePage() {
           <h2 className="text-lg font-semibold mb-4 uppercase tracking-wide text-muted">How to Test</h2>
           <ol className="space-y-2 text-sm text-muted-foreground">
             <li>1. Open DevTools → Application → Service Workers</li>
-            <li>2. Check "Offline" to simulate offline mode</li>
-            <li>3. Click "Simulate Action" while offline</li>
-            <li>4. Uncheck "Offline" to go back online</li>
+            <li>2. Check &quot;Offline&quot; to simulate offline mode</li>
+            <li>3. Click &quot;Simulate Action&quot; while offline</li>
+            <li>4. Uncheck &quot;Offline&quot; to go back online</li>
             <li>5. Watch data sync automatically</li>
             <li>6. Test slow connection: Network → Slow 3G</li>
           </ol>

@@ -16,9 +16,9 @@ interface UseWorkoutReturn {
   isLoading: boolean
   completeSet: (exerciseId: string, setId: string, completedReps: number) => Promise<void>
   mutate: typeof mutate
-  pendingUpdates: any[]
+  pendingUpdates: unknown[]
   syncPendingUpdates: () => Promise<void>
-  mergeWithServer: (local: any, server: any) => any
+  mergeWithServer: (local: unknown, server: unknown) => unknown
 }
 
 // Initialize offline infrastructure - only on client side
