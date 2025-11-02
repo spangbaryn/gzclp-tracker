@@ -16,9 +16,9 @@ interface WorkoutContainerProps {
   user: User & { settings: UserSettings | null }
 }
 
-export function WorkoutContainer({ 
-  initialWorkoutKey, 
-  settings, 
+export function WorkoutContainer({
+  initialWorkoutKey,
+  settings,
   progressions,
   user
 }: WorkoutContainerProps) {
@@ -26,12 +26,21 @@ export function WorkoutContainer({
   const pathname = usePathname()
   const { completeSet } = useWorkout()
   const { isOnline, connectionQuality } = useOfflineStatus()
-  
+
   // Note: The workout polling functionality has been removed as we're using
   // server-side props for the initial workout key. The useWorkout hook is
   // primarily for offline set completion functionality.
-  
+
   const currentWorkout = workouts[currentWorkoutKey]
+
+  // Function to advance to next workout (optimistic update)
+  const advanceToNextWorkout = () => {
+    const workoutKeys = ['A1', 'B1', 'A2', 'B2'] as const
+    const currentIndex = workoutKeys.indexOf(currentWorkoutKey)
+    const nextIndex = (currentIndex + 1) % 4
+    const nextWorkoutKey = workoutKeys[nextIndex]
+    setCurrentWorkoutKey(nextWorkoutKey)
+  }
   
   // Show connection warning for poor networks
   if (connectionQuality === 'poor' && isOnline && pathname === '/') {
@@ -42,26 +51,28 @@ export function WorkoutContainer({
             Poor connection detected. Your workout will be saved offline.
           </p>
         </div>
-        <WorkoutView 
+        <WorkoutView
           workout={currentWorkout}
           workoutKey={currentWorkoutKey}
           settings={settings}
           progressions={progressions}
           user={user}
           onCompleteSet={completeSet}
+          onAdvanceWorkout={advanceToNextWorkout}
         />
       </>
     )
   }
-  
+
   return (
-    <WorkoutView 
+    <WorkoutView
       workout={currentWorkout}
       workoutKey={currentWorkoutKey}
       settings={settings}
       progressions={progressions}
       user={user}
       onCompleteSet={completeSet}
+      onAdvanceWorkout={advanceToNextWorkout}
     />
   )
 }

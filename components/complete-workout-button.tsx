@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { CompleteModal } from './complete-modal'
 import type { ExerciseData } from './workout-view'
 import type { WorkoutType } from '@/lib/constants'
@@ -9,29 +10,38 @@ interface CompleteWorkoutButtonProps {
   workoutKey: WorkoutType
   exercisesData: ExerciseData[]
   onComplete?: () => void
+  onAdvanceWorkout?: () => void
 }
 
-export function CompleteWorkoutButton({ 
-  workoutKey, 
+export function CompleteWorkoutButton({
+  workoutKey,
   exercisesData,
-  onComplete
+  onComplete,
+  onAdvanceWorkout
 }: CompleteWorkoutButtonProps) {
   const [showModal, setShowModal] = useState(false)
   const [completedSets, setCompletedSets] = useState(0)
+  const router = useRouter()
 
   const handleComplete = async () => {
-    try {
-      // Calculate completed sets
-      const totalCompletedSets = exercisesData.reduce((sum, ex) => 
-        sum + ex.sets.filter(s => s.completed).length, 0
-      )
-      setCompletedSets(totalCompletedSets)
+    // Calculate completed sets
+    const totalCompletedSets = exercisesData.reduce((sum, ex) =>
+      sum + ex.sets.filter(s => s.completed).length, 0
+    )
+    setCompletedSets(totalCompletedSets)
 
-      // Save workout to database
+    // Optimistically call onComplete callback and show modal immediately
+    if (onComplete) {
+      onComplete()
+    }
+    setShowModal(true)
+
+    // Save workout to database in the background
+    try {
       console.log('Sending workout completion request...')
       console.log('Workout key:', workoutKey)
       console.log('Exercises data:', exercisesData)
-      
+
       const response = await fetch('/api/workouts/complete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -42,7 +52,7 @@ export function CompleteWorkoutButton({
       })
 
       console.log('Response status:', response.status)
-      
+
       if (!response.ok) {
         const errorText = await response.text()
         console.error('Error response:', errorText)
@@ -52,24 +62,24 @@ export function CompleteWorkoutButton({
       // Ensure the response is fully processed
       const result = await response.json()
       console.log('Workout completion result:', result)
-
-      // Call the onComplete callback if provided
-      if (onComplete) {
-        onComplete()
-      }
-
-      setShowModal(true)
     } catch (error) {
       console.error('Error completing workout:', error)
+      // Close modal and show error
+      setShowModal(false)
       alert('Failed to save workout. Please try again.')
     }
   }
 
   const handleModalClose = () => {
     setShowModal(false)
-    // Add timestamp to URL to force fresh data load
-    const timestamp = Date.now()
-    window.location.href = `/?t=${timestamp}`
+
+    // Optimistically advance to next workout immediately
+    if (onAdvanceWorkout) {
+      onAdvanceWorkout()
+    }
+
+    // Refresh server data in the background
+    router.refresh()
   }
 
   return (

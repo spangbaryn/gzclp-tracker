@@ -16,6 +16,7 @@ interface WorkoutViewProps {
   progressions: Progression[]
   user: User & { settings: UserSettings | null }
   onCompleteSet?: (exerciseId: string, setId: string, completedReps: number) => Promise<void>
+  onAdvanceWorkout?: () => void
 }
 
 export interface ExerciseData {
@@ -34,7 +35,7 @@ export interface ExerciseData {
 
 const WORKOUT_STATE_KEY = 'gzclp-current-workout-state'
 
-export function WorkoutView({ workout, workoutKey, settings, progressions, user, onCompleteSet }: WorkoutViewProps) {
+export function WorkoutView({ workout, workoutKey, settings, progressions, user, onCompleteSet, onAdvanceWorkout }: WorkoutViewProps) {
   const [lastT3Weights, setLastT3Weights] = useState<Record<string, { weight: number, shouldIncrease: boolean }>>({})
   const { startTime, startTimer, stopTimer } = useRestTimer()
   const [timerExerciseIndex, setTimerExerciseIndex] = useState<number | null>(null)
@@ -345,13 +346,14 @@ export function WorkoutView({ workout, workoutKey, settings, progressions, user,
           />
         </div>
       ))}
-      <CompleteWorkoutButton 
+      <CompleteWorkoutButton
         workoutKey={workoutKey}
         exercisesData={exercisesData}
         onComplete={() => {
           // Clear saved state when workout is completed
           localStorage.removeItem(WORKOUT_STATE_KEY)
         }}
+        onAdvanceWorkout={onAdvanceWorkout}
       />
     </>
   )
