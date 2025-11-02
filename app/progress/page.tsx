@@ -1,6 +1,7 @@
 import { AppContainer } from '@/components/app-container'
 import { getOrCreateUser } from '@/lib/user'
 import { workouts } from '@/lib/constants'
+import { ProgressView } from '@/components/progress-view'
 
 export default async function ProgressPage() {
   const user = await getOrCreateUser()
@@ -15,36 +16,10 @@ export default async function ProgressPage() {
         <h3 className="text-sm font-bold tracking-[2px] uppercase text-[#a8a8a8] mb-6">
           Current Progress
         </h3>
-        <div className="space-y-2">
-          {user.progressions.map((prog) => {
-            const liftName = prog.liftType === 'ohp' ? 'OHP' : 
-              prog.liftType.charAt(0).toUpperCase() + prog.liftType.slice(1)
-            const t1Weight = prog.t1Weight || user.settings![`${prog.liftType}Max` as keyof typeof user.settings] as number
-            const t2Weight = prog.t2Weight || user.settings![`${prog.liftType}Max` as keyof typeof user.settings] as number
-            
-            return (
-              <div key={prog.id} className="rounded-lg bg-white/[0.02] border border-white/5 p-4">
-                <div className="grid grid-cols-[1fr,120px,120px] items-center gap-4">
-                  <span className="text-foreground font-semibold text-base">
-                    {liftName}
-                  </span>
-                  <div className="text-right">
-                    <span className="text-xs text-muted uppercase tracking-wider">T1: </span>
-                    <span className="text-foreground text-lg font-bold">
-                      {t1Weight} {user.settings!.unit}
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs text-muted uppercase tracking-wider">T2: </span>
-                    <span className="text-foreground text-lg font-bold">
-                      {t2Weight} {user.settings!.unit}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        <ProgressView
+          progressions={user.progressions}
+          settings={user.settings!}
+        />
       </div>
 
       <div className="glass glass-gradient rounded-lg p-6">
