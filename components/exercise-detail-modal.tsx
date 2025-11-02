@@ -54,7 +54,7 @@ export function ExerciseDetailModal({ isOpen, onClose, exercise, workoutDate, us
     <div className="fixed inset-0 z-[9999] bg-ring-dark">
       <div className="absolute inset-0 flex flex-col h-full w-full">
         {/* Header */}
-        <div className="border-b border-white/10 p-6 pb-4 flex-shrink-0">
+        <div className="border-b border-white/10 px-6 pb-4 pt-[max(1.5rem,env(safe-area-inset-top))] flex-shrink-0">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
               <span className={`inline-block text-xs font-bold tracking-[1.5px] uppercase tier-${exercise.tier} px-3 py-1 rounded-full bg-white/5 border border-white/10`}>

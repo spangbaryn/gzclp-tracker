@@ -85,7 +85,7 @@ export function ProgressGraphModal({ isOpen, onClose, liftType, liftName, unit }
   const weightGain = latestWeight - startWeight
   const percentGain = startWeight > 0 ? ((weightGain / startWeight) * 100).toFixed(1) : '0'
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: ProgressDataPoint & { formattedDate: string; displayWeight: number } }> }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
@@ -113,7 +113,7 @@ export function ProgressGraphModal({ isOpen, onClose, liftType, liftName, unit }
     <div className="fixed inset-0 z-[9999] bg-ring-dark">
       <div className="absolute inset-0 flex flex-col h-full w-full">
         {/* Header */}
-        <div className="border-b border-white/10 p-6 pb-4 flex-shrink-0">
+        <div className="border-b border-white/10 px-6 pb-4 pt-[max(1.5rem,env(safe-area-inset-top))] flex-shrink-0">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-2xl font-bold text-foreground">
               {liftName} Progress
