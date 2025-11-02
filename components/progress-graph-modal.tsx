@@ -27,6 +27,7 @@ export function ProgressGraphModal({ isOpen, onClose, liftType, liftName, unit }
   const [data, setData] = useState<ProgressDataPoint[]>([])
   const [loading, setLoading] = useState(false)
   const [viewMode, setViewMode] = useState<'weight' | 'volume'>('weight')
+  const [tierFilter, setTierFilter] = useState<1 | 2>(1)
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -71,17 +72,20 @@ export function ProgressGraphModal({ isOpen, onClose, liftType, liftName, unit }
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
 
+  // Filter data by tier
+  const filteredData = data.filter(point => point.tier === tierFilter)
+
   // Transform data for chart
-  const chartData = data.map(point => ({
+  const chartData = filteredData.map(point => ({
     ...point,
     formattedDate: formatDate(point.date),
     displayWeight: viewMode === 'weight' ? point.weight : point.volume
   }))
 
   // Calculate stats
-  const totalWorkouts = data.length
-  const latestWeight = data.length > 0 ? data[data.length - 1].weight : 0
-  const startWeight = data.length > 0 ? data[0].weight : 0
+  const totalWorkouts = filteredData.length
+  const latestWeight = filteredData.length > 0 ? filteredData[filteredData.length - 1].weight : 0
+  const startWeight = filteredData.length > 0 ? filteredData[0].weight : 0
   const weightGain = latestWeight - startWeight
   const percentGain = startWeight > 0 ? ((weightGain / startWeight) * 100).toFixed(1) : '0'
 
@@ -116,7 +120,7 @@ export function ProgressGraphModal({ isOpen, onClose, liftType, liftName, unit }
         <div className="border-b border-white/10 px-6 pb-4 pt-[max(1.5rem,env(safe-area-inset-top))] flex-shrink-0">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-2xl font-bold text-foreground">
-              {liftName} Progress
+              {liftName} Progress (T{tierFilter})
             </h2>
             <button
               onClick={onClose}
@@ -157,6 +161,30 @@ export function ProgressGraphModal({ isOpen, onClose, liftType, liftName, unit }
                   <div className="text-xs uppercase tracking-wider text-muted mb-2">Percent Gain</div>
                   <div className="text-3xl font-bold text-green-500">+{percentGain}%</div>
                 </div>
+              </div>
+
+              {/* Tier Toggle */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setTierFilter(1)}
+                  className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold uppercase tracking-wider transition-all ${
+                    tierFilter === 1
+                      ? 'bg-white text-black'
+                      : 'border border-white/20 text-muted bg-white/5'
+                  }`}
+                >
+                  T1
+                </button>
+                <button
+                  onClick={() => setTierFilter(2)}
+                  className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold uppercase tracking-wider transition-all ${
+                    tierFilter === 2
+                      ? 'bg-white text-black'
+                      : 'border border-white/20 text-muted bg-white/5'
+                  }`}
+                >
+                  T2
+                </button>
               </div>
 
               {/* View Mode Toggle */}
@@ -226,9 +254,9 @@ export function ProgressGraphModal({ isOpen, onClose, liftType, liftName, unit }
               {/* Recent Workouts List */}
               <div className="space-y-2">
                 <h3 className="text-sm font-bold tracking-[2px] uppercase text-muted mb-3">
-                  Recent Workouts
+                  Recent Workouts (T{tierFilter})
                 </h3>
-                {data.slice(-10).reverse().map((workout, idx) => (
+                {filteredData.slice(-10).reverse().map((workout, idx) => (
                   <div key={idx} className="glass rounded-lg p-4 border border-white/10">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm text-muted">
