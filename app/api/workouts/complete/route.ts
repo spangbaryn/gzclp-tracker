@@ -67,13 +67,13 @@ export async function POST(request: NextRequest) {
           const stageKey = exercise.tier === 1 ? 't1Stage' : 't2Stage'
           const weightKey = exercise.tier === 1 ? 't1Weight' : 't2Weight'
           
-          const totalReps = exercise.sets.reduce((sum: number, set: ExerciseSet) => 
+          const totalReps = exercise.sets.reduce((sum: number, set: ExerciseSet) =>
             sum + (set.completed ? set.reps : 0), 0
           )
-          
+
           const stage = stageConfig[tierKey][progression[stageKey] as 1 | 2 | 3]
           let shouldProgress = false
-          
+
           if (exercise.tier === 1) {
             // T1: Progress if all sets completed
             shouldProgress = exercise.sets.every((set: ExerciseSet) => set.completed)
@@ -82,15 +82,24 @@ export async function POST(request: NextRequest) {
             const t2Stage = stage as { sets: number; reps: number; name: string; minVolume: number }
             shouldProgress = totalReps >= t2Stage.minVolume
           }
-          
+
           if (shouldProgress) {
             // Completed all sets/reps - increase weight, stay at same stage
-            const increment = (exercise.type === 'bench' || exercise.type === 'ohp') ? 5 : 10
+            let increment: number
+
+            if (exercise.tier === 1) {
+              // T1: +5 lbs upper body, +10 lbs lower body
+              increment = (exercise.type === 'bench' || exercise.type === 'ohp') ? 5 : 10
+            } else {
+              // T2: +2.5 lbs upper body, +5 lbs lower body
+              increment = (exercise.type === 'bench' || exercise.type === 'ohp') ? 2.5 : 5
+            }
+
             await prisma.progression.update({
               where: { id: progression.id },
-              data: { 
+              data: {
                 [weightKey]: exercise.weight + increment,
-                // Keep same stage when progressing weight
+                // Keep same stage when progressing weight (proper GZCLP)
                 [stageKey]: progression[stageKey]
               }
             })
@@ -98,7 +107,7 @@ export async function POST(request: NextRequest) {
             // Failed to complete - move to next stage with same weight
             const currentStage = progression[stageKey] as number
             const nextStage = currentStage + 1
-            
+
             if (nextStage <= 3) {
               // Move to easier stage
               await prisma.progression.update({
@@ -110,9 +119,19 @@ export async function POST(request: NextRequest) {
               })
             } else {
               // Completed Stage 3 failure - need to reset
-              // In real GZCLP, you'd test new 5RM and use 85%
-              // For now, we'll reduce weight by 10% and reset to stage 1
-              const resetWeight = Math.round(exercise.weight * 0.9)
+              let resetWeight: number
+
+              if (exercise.tier === 1) {
+                // T1: After failing 10x1, use 85% of failed weight
+                // (Substitute for testing new 5RM and using 85% of that)
+                resetWeight = Math.round(exercise.weight * 0.85)
+              } else {
+                // T2: After failing 3x6, reduce by 10-15 lbs
+                // (Substitute for resetting to 3x10 at 10-20 lbs heavier than original)
+                const reduction = (exercise.type === 'bench' || exercise.type === 'ohp') ? 10 : 15
+                resetWeight = Math.max(0, exercise.weight - reduction)
+              }
+
               await prisma.progression.update({
                 where: { id: progression.id },
                 data: {
@@ -124,12 +143,30 @@ export async function POST(request: NextRequest) {
           }
         }
       } else if (exercise.tier === 3) {
-        // T3 Progression: Check if user hit 25+ reps on AMRAP
+        // T3 Progression: Track accessory weight and increase if hit 25+ reps on AMRAP
         const lastSet = exercise.sets[exercise.sets.length - 1]
-        if (lastSet.completed && lastSet.isAmrap && lastSet.reps >= 25) {
-          // Store a note that this T3 should increase next time
-          // We'll handle this by looking at the previous workout when loading
-          console.log(`T3 ${exercise.name} achieved ${lastSet.reps} reps - should increase weight next time`)
+        const shouldIncrease = lastSet.completed && lastSet.isAmrap && lastSet.reps >= 25
+
+        // Find or create accessory progression
+        const accessoryProg = await prisma.accessoryProgression.upsert({
+          where: {
+            userId_exerciseName: {
+              userId: user.id,
+              exerciseName: exercise.name
+            }
+          },
+          update: {
+            weight: shouldIncrease ? exercise.weight + 5 : exercise.weight
+          },
+          create: {
+            userId: user.id,
+            exerciseName: exercise.name,
+            weight: shouldIncrease ? exercise.weight + 5 : exercise.weight
+          }
+        })
+
+        if (shouldIncrease) {
+          console.log(`T3 ${exercise.name} achieved ${lastSet.reps} reps - weight increased from ${exercise.weight} to ${accessoryProg.weight}`)
         }
       }
     }

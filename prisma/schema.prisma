@@ -12,12 +12,13 @@ datasource db {
 }
 
 model User {
-  id              String          @id @default(cuid())
-  email           String?         @unique
-  createdAt       DateTime        @default(now())
-  settings        UserSettings?
-  workouts        Workout[]
-  progressions    Progression[]
+  id                      String                  @id @default(cuid())
+  email                   String?                 @unique
+  createdAt               DateTime                @default(now())
+  settings                UserSettings?
+  workouts                Workout[]
+  progressions            Progression[]
+  accessoryProgressions   AccessoryProgression[]
 }
 
 model UserSettings {
@@ -42,8 +43,19 @@ model Progression {
   t2Weight        Float           @default(0)
   updatedAt       DateTime        @updatedAt
   user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@unique([userId, liftType])
+}
+
+model AccessoryProgression {
+  id              String          @id @default(cuid())
+  userId          String
+  exerciseName    String          // "Lat Pulldown", "Dumbbell Row", etc.
+  weight          Float           @default(45)
+  updatedAt       DateTime        @updatedAt
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, exerciseName])
 }
 
 model Workout {

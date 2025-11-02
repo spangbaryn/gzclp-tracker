@@ -171,11 +171,10 @@ export function WorkoutView({ workout, workoutKey, settings, progressions, user,
           stageName = stage.name
         }
       } else {
-        // T3 accessories
+        // T3 accessories - weight is already updated in database
         const lastT3 = lastT3Weights[exercise.name]
         if (lastT3) {
-          // If we have previous data and should increase, add 5 lbs
-          weight = lastT3.shouldIncrease ? lastT3.weight + 5 : lastT3.weight
+          weight = lastT3.weight
         } else {
           weight = 45 // Default accessory weight
         }
