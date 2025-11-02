@@ -9,6 +9,7 @@
   --font-sans: -apple-system, 'Helvetica Neue', sans-serif;
   --font-mono: var(--font-geist-mono);
   --color-ring: var(--ring);
+  --color-ring-dark: var(--ring-dark);
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
@@ -50,6 +51,7 @@
   --border: oklch(0.165 0 0);
   --input: oklch(0.165 0 0);
   --ring: oklch(0.646 0.227 257.815); /* #4a9eff */
+  --ring-dark: oklch(0.30 0.15 257.815); /* darker blue for backgrounds */
 }
 
 @layer base {

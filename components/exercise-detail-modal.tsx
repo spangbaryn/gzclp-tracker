@@ -47,7 +47,7 @@ export function ExerciseDetailModal({ isOpen, onClose, exercise, workoutDate, us
   const totalSets = exercise.sets.length
 
   return (
-    <div className="fixed inset-0 z-[200] bg-ring">
+    <div className="fixed inset-0 z-[200] bg-ring-dark">
       <div className="absolute inset-0 flex flex-col h-full">
         {/* Header */}
         <div className="border-b border-white/10 p-6 pb-4">
