@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import type { Exercise, Set, User, UserSettings } from '@prisma/client'
 
 interface ExerciseDetailModalProps {
@@ -20,19 +21,22 @@ export function ExerciseDetailModal({ isOpen, onClose, exercise, workoutDate, us
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
     }
-    
+
     if (isOpen) {
       document.addEventListener('keydown', handleEscape)
+      // Prevent scrolling on the main page when modal is open
       document.body.style.overflow = 'hidden'
+      document.documentElement.style.overflow = 'hidden'
     }
-    
+
     return () => {
       document.removeEventListener('keydown', handleEscape)
       document.body.style.overflow = ''
+      document.documentElement.style.overflow = ''
     }
   }, [isOpen, onClose])
 
-  if (!isOpen) return null
+  if (!isOpen || typeof window === 'undefined') return null
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -46,11 +50,11 @@ export function ExerciseDetailModal({ isOpen, onClose, exercise, workoutDate, us
   const completedSets = exercise.sets.filter(s => s.completed).length
   const totalSets = exercise.sets.length
 
-  return (
-    <div className="fixed inset-0 z-[200] bg-ring-dark">
-      <div className="absolute inset-0 flex flex-col h-full">
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] bg-ring-dark">
+      <div className="absolute inset-0 flex flex-col h-full w-full">
         {/* Header */}
-        <div className="border-b border-white/10 p-6 pb-4">
+        <div className="border-b border-white/10 p-6 pb-4 flex-shrink-0">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
               <span className={`inline-block text-xs font-bold tracking-[1.5px] uppercase tier-${exercise.tier} px-3 py-1 rounded-full bg-white/5 border border-white/10`}>
@@ -141,4 +145,7 @@ export function ExerciseDetailModal({ isOpen, onClose, exercise, workoutDate, us
       </div>
     </div>
   )
+
+  // Render modal at body level using portal
+  return createPortal(modalContent, document.body)
 }
