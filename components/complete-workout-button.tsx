@@ -62,6 +62,10 @@ export function CompleteWorkoutButton({
       // Ensure the response is fully processed
       const result = await response.json()
       console.log('Workout completion result:', result)
+
+      // Now that the API call is complete, refresh server data
+      // This ensures the database is updated before we fetch new data
+      router.refresh()
     } catch (error) {
       console.error('Error completing workout:', error)
       // Close modal and show error
@@ -77,9 +81,6 @@ export function CompleteWorkoutButton({
     if (onAdvanceWorkout) {
       onAdvanceWorkout()
     }
-
-    // Refresh server data in the background
-    router.refresh()
   }
 
   return (
