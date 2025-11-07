@@ -114,27 +114,51 @@ export function WorkoutView({ workout, workoutKey, settings, progressions, user,
     if (savedState) {
       try {
         const parsed = JSON.parse(savedState)
+        console.log('WorkoutView: Found saved state in localStorage:', parsed.workoutKey)
+        console.log('WorkoutView: Current workout key:', workoutKey)
+        console.log('WorkoutView: Timestamp age (hours):', (Date.now() - parsed.timestamp) / (60 * 60 * 1000))
+
         // Only restore if it's the same workout and less than 24 hours old
-        if (parsed.workoutKey === workoutKey && 
+        if (parsed.workoutKey === workoutKey &&
             Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
-          setExercisesData(parsed.exercisesData)
-          
-          // Restore timer state if present
-          if (parsed.timerState) {
-            const { startTime: savedStartTime, timerExerciseIndex: savedTimerIndex } = parsed.timerState
-            if (savedStartTime && savedTimerIndex !== null) {
-              // Restore the original start time - the hook will calculate elapsed time
-              startTimer(savedStartTime)
-              setTimerExerciseIndex(savedTimerIndex)
+
+          // Extra safety: verify exercises match what we expect for this workout
+          const expectedExerciseNames = workout.exercises.map(e => e.name)
+          const savedExerciseNames = parsed.exercisesData.map((e: ExerciseData) => e.name)
+          const exercisesMatch = expectedExerciseNames.length === savedExerciseNames.length &&
+            expectedExerciseNames.every((name, i) => name === savedExerciseNames[i])
+
+          if (exercisesMatch) {
+            console.log('WorkoutView: Restoring saved workout state')
+            setExercisesData(parsed.exercisesData)
+
+            // Restore timer state if present
+            if (parsed.timerState) {
+              const { startTime: savedStartTime, timerExerciseIndex: savedTimerIndex } = parsed.timerState
+              if (savedStartTime && savedTimerIndex !== null) {
+                // Restore the original start time - the hook will calculate elapsed time
+                startTimer(savedStartTime)
+                setTimerExerciseIndex(savedTimerIndex)
+              }
             }
+
+            setIsInitialized(true)
+            return
+          } else {
+            console.warn('WorkoutView: Saved exercises do not match expected exercises, clearing localStorage')
+            console.warn('Expected:', expectedExerciseNames)
+            console.warn('Saved:', savedExerciseNames)
+            localStorage.removeItem(WORKOUT_STATE_KEY)
           }
-          
-          setIsInitialized(true)
-          return
+        } else {
+          console.log('WorkoutView: Saved state is stale or for different workout, ignoring')
         }
       } catch (error) {
         console.error('Error parsing saved workout state:', error)
+        localStorage.removeItem(WORKOUT_STATE_KEY)
       }
+    } else {
+      console.log('WorkoutView: No saved state found in localStorage')
     }
 
     // If no valid saved state, initialize normally

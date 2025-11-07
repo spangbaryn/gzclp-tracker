@@ -30,13 +30,10 @@ export function CompleteWorkoutButton({
     )
     setCompletedSets(totalCompletedSets)
 
-    // Optimistically call onComplete callback and show modal immediately
-    if (onComplete) {
-      onComplete()
-    }
+    // Show modal immediately for good UX
     setShowModal(true)
 
-    // Save workout to database in the background
+    // Save workout to database
     try {
       console.log('Sending workout completion request...')
       console.log('Workout key:', workoutKey)
@@ -63,8 +60,13 @@ export function CompleteWorkoutButton({
       const result = await response.json()
       console.log('Workout completion result:', result)
 
-      // Now that the API call is complete, refresh server data
-      // This ensures the database is updated before we fetch new data
+      // Only after successful save, clear localStorage and call onComplete
+      if (onComplete) {
+        onComplete()
+      }
+
+      // Refresh server data to get the updated workout
+      console.log('Refreshing server data...')
       router.refresh()
     } catch (error) {
       console.error('Error completing workout:', error)
@@ -77,7 +79,7 @@ export function CompleteWorkoutButton({
   const handleModalClose = () => {
     setShowModal(false)
 
-    // Optimistically advance to next workout immediately
+    // Advance to next workout
     if (onAdvanceWorkout) {
       onAdvanceWorkout()
     }
