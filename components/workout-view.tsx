@@ -45,10 +45,14 @@ export function WorkoutView({ workout, workoutKey, settings, progressions, user,
   useEffect(() => {
     const fetchLastWorkout = async () => {
       try {
+        console.log('WorkoutView: Fetching last T3 weights...')
         const response = await fetch('/api/workouts/last-t3')
         if (response.ok) {
           const data = await response.json()
+          console.log('WorkoutView: Received T3 weights:', data)
           setLastT3Weights(data)
+        } else {
+          console.error('WorkoutView: Failed to fetch T3 weights, status:', response.status)
         }
       } catch (error) {
         console.error('Error fetching last T3 weights:', error)
@@ -109,6 +113,18 @@ export function WorkoutView({ workout, workoutKey, settings, progressions, user,
 
   // Initialize exercise data with T3 weights
   useEffect(() => {
+    // Don't initialize until T3 weights have been fetched
+    // Check if we have any T3 exercises and if lastT3Weights is populated
+    const hasT3Exercises = workout.exercises.some(e => e.tier === 3)
+    const t3WeightsReady = !hasT3Exercises || Object.keys(lastT3Weights).length > 0
+
+    if (!t3WeightsReady) {
+      console.log('WorkoutView: Waiting for T3 weights to load before initializing...')
+      return
+    }
+
+    console.log('WorkoutView: T3 weights are ready, proceeding with initialization')
+
     // Check localStorage first
     const savedState = localStorage.getItem(WORKOUT_STATE_KEY)
     if (savedState) {
@@ -196,10 +212,14 @@ export function WorkoutView({ workout, workoutKey, settings, progressions, user,
         }
       } else {
         // T3 accessories - weight is already updated in database
+        console.log(`WorkoutView: Looking up T3 weight for "${exercise.name}"`)
+        console.log('WorkoutView: Available T3 weights:', Object.keys(lastT3Weights))
         const lastT3 = lastT3Weights[exercise.name]
         if (lastT3) {
+          console.log(`WorkoutView: Found T3 weight for ${exercise.name}: ${lastT3.weight}`)
           weight = lastT3.weight
         } else {
+          console.log(`WorkoutView: No T3 weight found for ${exercise.name}, using default 45`)
           weight = 45 // Default accessory weight
         }
         sets = stageConfig.t3.sets
