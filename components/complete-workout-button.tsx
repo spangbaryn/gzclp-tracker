@@ -79,6 +79,9 @@ export function CompleteWorkoutButton({
   const handleModalClose = () => {
     setShowModal(false)
 
+    // Scroll to top of page
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+
     // Advance to next workout
     if (onAdvanceWorkout) {
       onAdvanceWorkout()
